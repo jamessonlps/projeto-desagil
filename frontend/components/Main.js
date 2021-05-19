@@ -1,25 +1,26 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { ActivityIndicator } from 'react-native';
+import { Asset } from 'expo-asset';
+import PDFReader from 'rn-pdf-reader-js';
 
 export default function Main(props) {
-    return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Main</Text>
-        </View>
-    );
-};
+    const file = require('../files/cad.pdf');
 
-const styles = StyleSheet.create({
-    container: {
-        height: '100%',
-        flexDirection: 'column',
-        alignItems: 'stretch',
-        backgroundColor: '#ffffff',
-    },
-    title: {
-        padding: 10,
-        color: '#ffffff',
-        backgroundColor: '#000000',
-        textAlign: 'center',
-    },
-});
+    const [uri, setURI] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    Asset.loadAsync(file)
+        .then(() => {
+            if (loading) {
+                const asset = Asset.fromModule(file);
+                setURI(asset.localUri);
+                setLoading(false);
+            }
+        });
+
+    if (loading) {
+        return <ActivityIndicator color="#0000ff"/>;
+    } else {
+        return <PDFReader source={{uri: uri}}/>;
+    }
+};
