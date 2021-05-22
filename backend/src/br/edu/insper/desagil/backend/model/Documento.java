@@ -5,20 +5,26 @@ import java.util.Date;
 import java.util.List;
 
 public class Documento {
-	private String titulo;
-	private String url;
-	private Date dataCriacao;
-	private Date ultimaModificacao;
-	private List<Observacao> observacoes;
+	private int id;			// Vamos acessar o documento pela id
+	private String titulo;	// Será exibido pelo front-end
+	private String url;		// Link para acessarmos o documento
+	private Date dataCriacao;		// frontEnd
+	private Date ultimaModificacao;	// frontEnd	
+	private List<Observacao> observacoes;	// frontEnd
 	
-	public Documento(String titulo, String url) {
+	public Documento(int id, String titulo, String url) {
 		super();
+		this.id = id;
 		this.titulo = titulo;
 		this.url = url;
 //		this.dataCriacao =;
-		this.observacoes = new ArrayList();
+		this.observacoes = new ArrayList<Observacao>();
 //		this.ultimaModificacao =;
 	
+	}
+	
+	public int getId() {
+		return id;
 	}
 
 	public String getUrl() {
