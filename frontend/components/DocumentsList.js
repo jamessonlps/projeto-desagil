@@ -1,25 +1,21 @@
 import React, { useState } from 'react';
-import { View, Button, StyleSheet, Text } from 'react-native';
+import { View, Button, StyleSheet, Text, SafeAreaView } from 'react-native';
 
 function DocumentsList() {
 
     const [loading, setLoading] = useState(false);
 
-    function DocumentPost() {
-        return (
-            <>
-                <View style={styles.documentPost}>
-                    <Text>Planta baixa D. R. Bias</Text>
-                    <Button title="Visualizar" />
-                    <Button title="Detalhes" />
-                </View>
-            </>
-        );
-    };
-
     return (
-        DocumentPost()
+        <SafeAreaView style={styles.documentPost}>
+            <Text>Planta baixa D. R. Bias</Text>
+            <View >
+                <Button title="Visualizar" />
+                <Button title="Detalhes" />
+            </View>
+        </SafeAreaView>
     );
+
+
 };
 
 const styles = StyleSheet.create({
@@ -32,8 +28,7 @@ const styles = StyleSheet.create({
     },
     documentPost: {
         display: 'flex',
-        flexDirection: 'col',
-        height: '5rem',
+        flexDirection: 'column',
         width: '100%',
     },
 });
