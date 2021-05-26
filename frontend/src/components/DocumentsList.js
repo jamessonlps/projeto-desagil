@@ -3,7 +3,7 @@ import { View, Button, StyleSheet, Text, SafeAreaView } from 'react-native';
 import { Asset } from 'expo-asset';
 import PDFReader from 'rn-pdf-reader-js';
 
-import client from '../client';
+import client from '../../client';
 
 function stringify(body) {
     return JSON.stringify(body, null, 2);
