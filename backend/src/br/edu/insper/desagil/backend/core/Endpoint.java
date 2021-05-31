@@ -2,6 +2,8 @@ package br.edu.insper.desagil.backend.core;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import com.google.gson.Gson;
@@ -10,7 +12,6 @@ import com.google.gson.JsonSyntaxException;
 import br.edu.insper.desagil.backend.core.exception.APIException;
 import br.edu.insper.desagil.backend.core.exception.BadRequestException;
 import br.edu.insper.desagil.backend.core.exception.MethodNotImplementedException;
-import br.edu.insper.desagil.backend.core.exception.NotFoundException;
 
 public abstract class Endpoint<T> extends Context {
 	private final Class<T> klass;
@@ -27,17 +28,27 @@ public abstract class Endpoint<T> extends Context {
 		this.gson = new Gson();
 	}
 
-	protected String extract(Map<String, String> args, String key) throws APIException {
-		String value = args.get(key);
+	protected String extract(Map<String, String> args, String name) throws APIException {
+		String value = args.get(name);
 		if (value == null) {
-			throw new NotFoundException("Key " + key + " not found");
+			throw new BadRequestException("Arg " + name + " not found");
 		}
 		return value;
 	}
 
+	protected List<String> split(String arg, String regex) {
+		return Arrays.asList(arg.split(regex));
+	}
+
 	@Override
-	public final String doGet(Map<String, String> args) throws APIException {
-		return gson.toJson(get(args));
+	public final String doGet(Map<String, String> args, boolean isList) throws APIException {
+		String value;
+		if (isList) {
+			value = gson.toJson(getList(args));
+		} else {
+			value = gson.toJson(get(args));
+		}
+		return value;
 	}
 
 	@Override
@@ -69,11 +80,21 @@ public abstract class Endpoint<T> extends Context {
 	}
 
 	@Override
-	public final String doDelete(Map<String, String> args) throws APIException {
-		return gson.toJson(delete(args));
+	public final String doDelete(Map<String, String> args, boolean isList) throws APIException {
+		String value;
+		if (isList) {
+			value = gson.toJson(deleteList(args));
+		} else {
+			value = gson.toJson(delete(args));
+		}
+		return value;
 	}
 
 	protected T get(Map<String, String> args) throws APIException {
+		throw new MethodNotImplementedException("get");
+	}
+
+	protected List<T> getList(Map<String, String> args) throws APIException {
 		throw new MethodNotImplementedException("get");
 	}
 
@@ -86,6 +107,10 @@ public abstract class Endpoint<T> extends Context {
 	}
 
 	protected Map<String, String> delete(Map<String, String> args) throws APIException {
+		throw new MethodNotImplementedException("delete");
+	}
+
+	protected Map<String, String> deleteList(Map<String, String> args) throws APIException {
 		throw new MethodNotImplementedException("delete");
 	}
 }
