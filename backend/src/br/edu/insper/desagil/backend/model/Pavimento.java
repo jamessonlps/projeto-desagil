@@ -9,6 +9,7 @@ public class Pavimento extends FirestoreEntity {
 	private int codigo; // código do Pavimento --> Pode ser da forma AB0123 --> para outras referencias dentro dele, podemos complementar AB0123___
 	private String titulo; // exibido pelo FrontEnd
 	private String planta; 
+	private String responsavel;
 	private List<Integer> documentos; // Lista com os id's dos documentos
 	
 	public Pavimento() {
@@ -16,10 +17,13 @@ public class Pavimento extends FirestoreEntity {
 		// não faz nada
 	}
 	
-	public Pavimento(int codigo) {
+	public Pavimento(int codigo, String titulo, String responsavel) {
 		super();
 		this.codigo = codigo;
+		this.titulo = titulo;
+		this.responsavel = responsavel;
 		this.documentos = new ArrayList<>();
+		
 	}
 
 	public int getCodigo() {
@@ -35,6 +39,14 @@ public class Pavimento extends FirestoreEntity {
 		return planta;
 	}
 
+	
+	public String getResponsavel() {
+		return responsavel;
+	}
+
+	public void setResponsavel(String responsavel) {
+		this.responsavel = responsavel;
+	}
 
 	public List<Integer> getDocumentos(){
 		return documentos;

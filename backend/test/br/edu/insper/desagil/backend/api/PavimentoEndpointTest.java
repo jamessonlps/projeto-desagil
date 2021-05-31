@@ -19,8 +19,11 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 
+import br.edu.insper.desagil.backend.Backend;
 import br.edu.insper.desagil.backend.core.exception.APIException;
+import br.edu.insper.desagil.backend.core.exception.DBException;
 import br.edu.insper.desagil.backend.core.exception.NotFoundException;
+import br.edu.insper.desagil.backend.db.PavimentoDAO;
 import br.edu.insper.desagil.backend.model.Pavimento;
 
 
@@ -28,22 +31,19 @@ class PavimentoEndpointTest {
 	private PavimentoEndpoint endpoint;
 	private Map<String, String> args;
 	private Pavimento pavimento;
+	private PavimentoDAO dao;
 	
 	@BeforeAll
 	public static void initialSetUp() throws IOException {
-		FileInputStream stream = new FileInputStream("firestore.json");
-		FirebaseOptions options = FirebaseOptions.builder()
-			.setCredentials(GoogleCredentials.fromStream(stream))
-			.build();
-		FirebaseApp.initializeApp(options);
+		Backend.init("firestore_test.json");
 	}
 	
-	
 	@BeforeEach 
-	public void setUp() {
+	public void setUp() throws APIException, DBException {
 		endpoint = new PavimentoEndpoint();
 		args = new HashMap<>();
-
+		dao = new PavimentoDAO();
+		dao.deleteAll();
 		
 	}
 	
