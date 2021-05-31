@@ -37,6 +37,11 @@ public class Dispatcher extends AbstractHandler {
 		String responseBody;
 		try {
 			String uri = request.getRequestURI();
+			int length = uri.length();
+			boolean isList = length > 5 && uri.endsWith("/list");
+			if (isList) {
+				uri = uri.substring(0, length - 5);
+			}
 			Context context = contexts.get(uri);
 			if (context == null) {
 				throw new NotFoundException("Endpoint " + uri + " not found");
@@ -44,15 +49,18 @@ public class Dispatcher extends AbstractHandler {
 
 			Map<String, String> args = new HashMap<>();
 			Map<String, String[]> map = request.getParameterMap();
-			for (String key : map.keySet()) {
-				String[] values = map.get(key);
-				if (values.length < 1) {
-					throw new BadRequestException("Key " + key + " has no value");
+			for (String name : map.keySet()) {
+				if (name.isEmpty()) {
+					throw new BadRequestException("Empty args not allowed");
 				}
-				if (values.length > 1) {
-					throw new BadRequestException("Key " + key + " has multiple values");
+				String[] words = map.get(name);
+				if (words.length < 1) {
+					throw new BadRequestException("Arg " + name + " has no value");
 				}
-				args.put(key, values[0]);
+				if (words.length > 1) {
+					throw new BadRequestException("Arg " + name + " has multiple values");
+				}
+				args.put(name, words[0]);
 			}
 
 			String line;
@@ -67,7 +75,7 @@ public class Dispatcher extends AbstractHandler {
 			String method = request.getMethod();
 			switch (method) {
 			case "GET":
-				responseBody = context.doGet(args);
+				responseBody = context.doGet(args, isList);
 				break;
 			case "POST":
 				responseBody = context.doPost(args, requestBody);
@@ -76,7 +84,7 @@ public class Dispatcher extends AbstractHandler {
 				responseBody = context.doPut(args, requestBody);
 				break;
 			case "DELETE":
-				responseBody = context.doDelete(args);
+				responseBody = context.doDelete(args, isList);
 				break;
 			case "OPTIONS":
 				responseBody = "";
