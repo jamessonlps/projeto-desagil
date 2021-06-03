@@ -5,23 +5,23 @@ import java.util.List;
 
 import br.edu.insper.desagil.backend.core.firestore.FirestoreEntity;
 
-public class Pavimento extends FirestoreEntity {
-	private int codigo; // código do Pavimento --> Pode ser da forma AB0123 --> para outras referencias dentro dele, podemos complementar AB0123___
-	private String titulo; // exibido pelo FrontEnd
+public class Setor extends FirestoreEntity {
+	private int codigo; 				// código do Pavimento --> Pode ser da forma AB0123 --> para outras referencias dentro dele, podemos complementar AB0123___
+	private String titulo; 				// exibido pelo FrontEnd
 	private String responsavel;
-	private List<Integer> documentos; // Lista com os id's dos documentos
-	private List<Integer> apartamentos; // Lista com os id's dos apartamentos
+	private int idPavimento;			// id do pavimento a que se refere
+	private List<Integer> documentos; 	// Lista com os id's dos documentos
 	
-	public Pavimento() {
+	public Setor() {
 		super();
 		// não faz nada
 	}
 	
-	public Pavimento(int codigo, String titulo, String responsavel) {
+	public Setor(int codigo, String titulo, int idPavimento) {
 		super();
 		this.codigo = codigo;
 		this.titulo = titulo;
-		this.responsavel = responsavel;
+		this.idPavimento = idPavimento;
 		this.documentos = new ArrayList<>();
 		
 	}
@@ -33,14 +33,13 @@ public class Pavimento extends FirestoreEntity {
 	public String getTitulo() {
 		return titulo;
 	}
-
 	
-	public List<Integer> getApartamentos() {
-		return apartamentos;
+	public int getIdPavimento() {
+		return idPavimento;
 	}
 
-	public void setApartamentos(List<Integer> apartamentos) {
-		this.apartamentos = apartamentos;
+	public void setIdPavimento(int idPavimento) {
+		this.idPavimento = idPavimento;
 	}
 
 	public String getResponsavel() {

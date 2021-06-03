@@ -4,27 +4,38 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Documento {
-	private int id;			// Vamos acessar o documento pela id
+import br.edu.insper.desagil.backend.core.firestore.FirestoreEntity;
+
+public class Documento extends FirestoreEntity {
+	private int codigo;			// Vamos acessar o documento pela id
 	private String titulo;	// Será exibido pelo front-end
+	private String tipo; 	// se Planta Arquitetônica, se Orçamento, etc..
+	private int referencia; // id do Pavimento / Apartamento a que o documento se refere.
 	private String url;		// Link para acessarmos o documento
-	private Date dataCriacao;		// frontEnd
+	private String dataCriacao;		// frontEnd -- fixo
 	private Date ultimaModificacao;	// frontEnd	
 	private List<Observacao> observacoes;	// frontEnd
 	
-	public Documento(int id, String titulo, String url) {
+	public Documento() {
 		super();
-		this.id = id;
+	}
+	
+	public Documento(int codigo, String titulo, String tipo, String url) {
+		super();
+		this.codigo = codigo;
 		this.titulo = titulo;
+		this.tipo = tipo;
 		this.url = url;
-//		this.dataCriacao =;
+		
+		Date date = new Date();
+		this.dataCriacao = date.toString();
+		
 		this.observacoes = new ArrayList<Observacao>();
-//		this.ultimaModificacao =;
 	
 	}
 	
-	public int getId() {
-		return id;
+	public int getCodigo() {
+		return codigo;
 	}
 
 	public String getUrl() {
@@ -47,8 +58,24 @@ public class Documento {
 		return titulo;
 	}
 
-	public Date getDataCriacao() {
+	public String getDataCriacao() {
 		return dataCriacao;
+	}
+
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+
+	public int getReferencia() {
+		return referencia;
+	}
+
+	public void setReferencia(int referencia) {
+		this.referencia = referencia;
 	}
 
 	public List<Observacao> getObservacoes() {
@@ -57,6 +84,11 @@ public class Documento {
 	
 	public void addObservacao(Observacao obs) {
 		this.observacoes.add(obs);
+	}
+
+	@Override
+	public String key() {
+		return Integer.toString(codigo);
 	}
 	
 }
