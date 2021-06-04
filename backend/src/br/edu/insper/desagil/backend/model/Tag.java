@@ -4,6 +4,7 @@ import br.edu.insper.desagil.backend.core.firestore.FirestoreEntity;
 
 public class Tag extends FirestoreEntity {
 	private int id;
+	private int obra;
 	private int alvo;
 	private String tipo;
 	
@@ -11,10 +12,11 @@ public class Tag extends FirestoreEntity {
 		super();
 	}
 
-	public Tag(int id, int alvo, String tipo) {
+	public Tag(int id, int alvo, int obra, String tipo) {
 		super();
 		this.id = id;
 		this.alvo = alvo;
+		this.obra = obra;
 		this.tipo = tipo;
 	}
 	
@@ -36,6 +38,10 @@ public class Tag extends FirestoreEntity {
 
 	public int getId() {
 		return id;
+	}
+	
+	public int getObra() {
+		return obra;
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import br.edu.insper.desagil.backend.core.firestore.FirestoreEntity;
 
 public class Setor extends FirestoreEntity {
 	private int codigo; 				// código do Pavimento --> Pode ser da forma AB0123 --> para outras referencias dentro dele, podemos complementar AB0123___
+	private int obra;
 	private String titulo; 				// exibido pelo FrontEnd
 	private String responsavel;
 	private int idPavimento;			// id do pavimento a que se refere
@@ -17,9 +18,10 @@ public class Setor extends FirestoreEntity {
 		// não faz nada
 	}
 	
-	public Setor(int codigo, String titulo, int idPavimento) {
+	public Setor(int codigo, int obra, String titulo, int idPavimento) {
 		super();
 		this.codigo = codigo;
+		this.obra = obra;
 		this.titulo = titulo;
 		this.idPavimento = idPavimento;
 		this.documentos = new ArrayList<>();
@@ -28,6 +30,10 @@ public class Setor extends FirestoreEntity {
 
 	public int getCodigo() {
 		return codigo;
+	}
+	
+	public int getObra() {
+		return obra;
 	}
 	
 	public String getTitulo() {

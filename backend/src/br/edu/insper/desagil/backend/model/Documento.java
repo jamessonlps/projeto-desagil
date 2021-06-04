@@ -8,27 +8,33 @@ import br.edu.insper.desagil.backend.core.firestore.FirestoreEntity;
 
 public class Documento extends FirestoreEntity {
 	private int codigo;			// Vamos acessar o documento pela id
+	private int obra;		// Guarda o id da obra a qual se refere
 	private String titulo;	// Será exibido pelo front-end
 	private String tipo; 	// se Planta Arquitetônica, se Orçamento, etc..
 	private int referencia; // id do Pavimento / Apartamento a que o documento se refere.
 	private String url;		// Link para acessarmos o documento
 	private String dataCriacao;		// frontEnd -- fixo
-	private Date ultimaModificacao;	// frontEnd	
+	private String ultimaModificacao;	// frontEnd	
 	private List<Observacao> observacoes;	// frontEnd
 	
 	public Documento() {
 		super();
+		Date date = new Date();
+		this.dataCriacao = date.toString();
+		this.ultimaModificacao = date.toString();
 	}
 	
-	public Documento(int codigo, String titulo, String tipo, String url) {
+	public Documento(int codigo, int obra, String titulo, String tipo, String url) {
 		super();
 		this.codigo = codigo;
+		this.obra = obra;
 		this.titulo = titulo;
 		this.tipo = tipo;
 		this.url = url;
 		
 		Date date = new Date();
 		this.dataCriacao = date.toString();
+		this.ultimaModificacao = date.toString();
 		
 		this.observacoes = new ArrayList<Observacao>();
 	
@@ -36,6 +42,10 @@ public class Documento extends FirestoreEntity {
 	
 	public int getCodigo() {
 		return codigo;
+	}
+
+	public int getObra() {
+		return obra;
 	}
 
 	public String getUrl() {
@@ -46,11 +56,11 @@ public class Documento extends FirestoreEntity {
 		this.url = url;
 	}
 
-	public Date getUltimaModificacao() {
+	public String getUltimaModificacao() {
 		return ultimaModificacao;
 	}
 
-	public void setUltimaModificacao(Date ultimaModificacao) {
+	public void setUltimaModificacao(String ultimaModificacao) {
 		this.ultimaModificacao = ultimaModificacao;
 	}
 
