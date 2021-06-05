@@ -1,12 +1,12 @@
 import React from 'react';
 import { View, Button, StatusBar, Text, StyleSheet } from 'react-native';
 
-export default function Page2(props) {
+import QRCodeScanner from '../components/QRCodeScanner';
+
+export default function QRCodeScan(props) {
     return (
         <View style={styles.container}>
-            <Text>
-                Página 2
-            </Text>
+            <QRCodeScanner />
         </View>
     );
 }
@@ -14,6 +14,5 @@ export default function Page2(props) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: StatusBar.currentHeight || 30,
     },
 })
