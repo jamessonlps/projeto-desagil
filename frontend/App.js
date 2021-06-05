@@ -2,8 +2,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 
 import Main from './src/Main';
-import QRCodeScanner from './src/components/QRCodeScanner';
-import DocumentsList from './src/components/DocumentsList';
+import DocumentCard from './src/components/DocumentCard';
 
 import { store } from './store';
 
@@ -11,12 +10,12 @@ export default function App() {
     if (store) {
         return (
             <Provider store={store}>
-                <QRCodeScanner/>
+                <Main/>
             </Provider>
         );
     } else {
         return (
-            <QRCodeScanner/>
+            <Main/>
         );
     }
 };

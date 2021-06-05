@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, Button, Alert } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import PDFReader from 'rn-pdf-reader-js';
-
+import { useNavigation } from '@react-navigation/native';
 import client from '../../client';
 
 export default function QRCodeScanner() {
@@ -10,10 +9,14 @@ export default function QRCodeScanner() {
     const [scanned, setScanned] = useState(false);
 
     const [loading, setLoading] = useState(true);
-    const [code, setCode] = useState(null);
-    const [pdfLink, setPdfLink] = useState('');
-    const [viewDocument, setViewDocument] = useState(false);
     const [response, setResponse] = useState(null);
+
+    const [readingType, setReadingType] = useState('');
+    const [target, setTarget] = useState('');
+
+    const navigation = useNavigation();
+
+    let path;
 
     useEffect(() => {
         (async () => {
@@ -22,26 +25,40 @@ export default function QRCodeScanner() {
         })();
     }, []);
 
+    // Abre popup após ler QR Code e pegar target do código
+    useEffect(() => {
+        if (readingType == 'documento') {
+            path = "PDFView"; 
+        }
+        else {
+            path = "GeneralView";
+        }
+        client.get(`http://192.168.1.106:8080/${readingType}?codigo=${target}`, (body) => {
+            Alert.alert(
+                `${body.titulo}`,
+                `${body.responsavel}`,
+                [
+                    {text: "Cancelar", style: "cancel"}, 
+                    {text: "Ver mais", onPress: () => {
+                        navigation.navigate(path, {...body, tipoObra: readingType});
+                    }}
+                ]
+            )
+        }, 
+        (message) => setResponse(message), 
+        () => setLoading(false), 
+        () => setLoading(false)
+        );
+    }, [target])
+
+
     const handleBarCodeScanned = ({ type, data }) => {
         setScanned(true);
         client.get(
-            `http://192.168.1.111:8080/pavimento?codigo=${data}`,
+            `http://192.168.1.106:8080/tag?id=${data}`,
             (body) => {
-                Alert.alert(
-                    `${body.titulo}`,
-                    `${body.responsavel}`,
-                    [
-                        {
-                          text: "Cancelar",
-                          onPress: () => console.log("Cancel Pressed"),
-                          style: "cancel"
-                        },
-                        { text: "Abrir documento", onPress: () => {
-                            setPdfLink(body.planta);
-                            setViewDocument(true);
-                        } }
-                    ]
-                )
+                setReadingType(body.tipo);
+                setTarget(body.alvo);
             },
             (message) => setResponse(message),
             () => setLoading(false),
@@ -58,17 +75,16 @@ export default function QRCodeScanner() {
 
     return (
         <>
-        {
-            viewDocument ? <PDFReader source={{uri: pdfLink}} />
-            :
             <View style={styles.container}>
                 <BarCodeScanner
                     onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
                     style={StyleSheet.absoluteFillObject}
                 />
-                {scanned && <Button title={'Escanear novamente'} onPress={() => setScanned(false)} />}
+                {scanned && <Button title={'Escanear novamente'} onPress={() => {
+                    setScanned(false)
+                    setTarget(null);
+                }} />}
             </View>
-        }
         </>
     );
 }
