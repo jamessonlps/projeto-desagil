@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,11 +28,12 @@ import br.edu.insper.desagil.backend.db.TagDAO;
 import br.edu.insper.desagil.backend.model.Tag;
 
 
-class TagEndpointTest
+class TagEndpointTest {
 	private TagEndpoint endpoint;
 	private Map<String, String> args;
 	private Tag tag;
-	private tagDAO dao;
+	private TagDAO dao;
+	private Map<String, String> resultPost;
 	
 	@BeforeAll
 	public static void initialSetUp() throws IOException {
@@ -45,58 +47,43 @@ class TagEndpointTest
 		dao = new TagDAO();
 		dao.deleteAll();
 		
+		tag = new Tag(88997, 1111, 2222, "Pavimento");
+		
+		args.put("id", "88997");
+		resultPost = endpoint.post(args, tag);
 	}
 	
 
 	@Test
 	public void postAndGet() throws APIException {
-        
-		tag = new Tag(12340, 12, 10102,"Pavimento");
+		assertTrue(resultPost.containsKey("date"));
 		
-		Map<String, String> result = endpoint.post(args, tag);
-		assertTrue(result.containsKey("date"));
-		
-		args.put("id", "12340");
 		Tag tagGet = endpoint.get(args);
-		assertEquals(12, tagGet.getCodigo());
-		
-		
+		assertEquals(88997, tagGet.getId());
+				
 	}
 	
 	@Test
 	public void postPutAndGet() throws APIException {
-		
-		tag = new Tag(12340, 12, 10102,"Pavimento");
-		
-		Map<String, String> resultPost = endpoint.post(args, tag);
 		assertTrue(resultPost.containsKey("date"));
 		
-		
-		tag.setAlvo(1212);
-		args.put("id", "12340");
+		tag.setTipo("Setor");
 		Map<String, String> resultPut = endpoint.put(args, tag);
 		assertTrue(resultPut.containsKey("date"));
 		
-		
 		Tag tagGet = endpoint.get(args);
-		assertEquals(12340, tagGet.getID());
-		assertEquals("Pavimento", tagGet.getTipo());
-		assertEquals(10102, tagGet.getObra());
-		assertEquals(1212, tagGet.getAlvo());
-		
+		assertEquals(88997, tagGet.getId());
+		assertEquals("Setor", tagGet.getTipo());
 	}
 	
 	@Test
 	public void postDeleteAndGet() throws APIException {
-		tag = new Tag(12340, 12, 10102,"Pavimento");
-		
-		Map<String, String> resultPost = endpoint.post(args, tag);
 		assertTrue(resultPost.containsKey("date"));
-		
-		args.put("id", "12340");
+
 		Map<String, String> resultDelete = endpoint.delete(args);
 		assertTrue(resultDelete.containsKey("date"));
 		
+				
 		APIException exception = assertThrows(APIException.class, () -> {
 			endpoint.get(args);
 			

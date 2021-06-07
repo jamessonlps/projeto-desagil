@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,11 +28,12 @@ import br.edu.insper.desagil.backend.db.ObraDAO;
 import br.edu.insper.desagil.backend.model.Obra;
 
 
-class ObraEndpointTest
+class ObraEndpointTest {
 	private ObraEndpoint endpoint;
 	private Map<String, String> args;
 	private Obra obra;
 	private ObraDAO dao;
+	private Map<String, String> resultPost;
 	
 	@BeforeAll
 	public static void initialSetUp() throws IOException {
@@ -45,77 +47,43 @@ class ObraEndpointTest
 		dao = new ObraDAO();
 		dao.deleteAll();
 		
+		obra = new Obra(11111, "Obra magnífica de Gizé");
+		
+		args.put("codigo", "11111");
+		resultPost = endpoint.post(args, obra);
 	}
 	
 
 	@Test
 	public void postAndGet() throws APIException {
+		assertTrue(resultPost.containsKey("date"));
 		
-		ArrayList<String> logs = new ArrayList<>();
-		ArrayList<String> alertas = new ArrayList<>();
-		logs.add("Piso torto");
-		logs.add("Chao sujo");
-		alertas.add("Piso torto");
-        
-		obra = new Obra(10102, "Toca do Larry", "Rua Alvorada", "Pedro",  logs, alertas);
-		
-		Map<String, String> result = endpoint.post(args, obra);
-		assertTrue(result.containsKey("date"));
-		
-		args.put("codigo", "10102");
 		Obra obraGet = endpoint.get(args);
-		assertEquals(10102, obraGet.getCodigo());
-		
-		
+		assertEquals(11111, obraGet.getCodigo());
+				
 	}
 	
 	@Test
 	public void postPutAndGet() throws APIException {
-		ArrayList<String> logs = new ArrayList<>();
-		ArrayList<String> alertas = new ArrayList<>();
-		logs.add("Piso torto");
-		logs.add("Chao sujo");
-		alertas.add("Piso torto");
-        
-		obra = new Obra(10102, "Toca do Larry", "Rua Alvorada", "Pedro",  logs, alertas);		
-		Map<String, String> resultPost = endpoint.post(args, obra);
 		assertTrue(resultPost.containsKey("date"));
 		
-		
-		obra.setResponsavel("Gabriel");
-		args.put("codigo", "10102");
+		obra.setTitulo("Obra Ainda mais Magnífica de Gizé");
 		Map<String, String> resultPut = endpoint.put(args, obra);
 		assertTrue(resultPut.containsKey("date"));
 		
-		
 		Obra obraGet = endpoint.get(args);
-		assertEquals(10102, obraGet.getCodigo());
-		assertEquals("Toca do Larry", obraGet.getTitulo());
-		assertEquals("Rua Alvorada", obraGet.getEndereco());
-		assertEquals(logs, obraGet.getLogs());
-		assertEquals(alertas, obraGet.getAlertas());
-
-		assertEquals("Gabriel", obraGet.getResponsavel());
-		
+		assertEquals(11111, obraGet.getCodigo());
+		assertEquals("Obra Ainda mais Magnífica de Gizé", obraGet.getTitulo());
 	}
 	
 	@Test
 	public void postDeleteAndGet() throws APIException {
-		ArrayList<String> logs = new ArrayList<>();
-		ArrayList<String> alertas = new ArrayList<>();
-		logs.add("Piso torto");
-		logs.add("Chao sujo");
-		alertas.add("Piso torto");
-        
-		obra = new Obra(10102, "Toca do Larry", "Rua Alvorada", "Pedro",  logs, alertas);
-		
-		Map<String, String> resultPost = endpoint.post(args, obra);
 		assertTrue(resultPost.containsKey("date"));
-		
-		args.put("codigo", "10102");
+
 		Map<String, String> resultDelete = endpoint.delete(args);
 		assertTrue(resultDelete.containsKey("date"));
 		
+				
 		APIException exception = assertThrows(APIException.class, () -> {
 			endpoint.get(args);
 			

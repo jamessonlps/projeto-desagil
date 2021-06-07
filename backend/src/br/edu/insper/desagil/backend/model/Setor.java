@@ -40,6 +40,11 @@ public class Setor extends FirestoreEntity {
 		return titulo;
 	}
 	
+	
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
+	}
+
 	public int getIdPavimento() {
 		return idPavimento;
 	}

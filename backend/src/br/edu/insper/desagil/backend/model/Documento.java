@@ -68,6 +68,10 @@ public class Documento extends FirestoreEntity {
 		return titulo;
 	}
 
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
+	}
+
 	public String getDataCriacao() {
 		return dataCriacao;
 	}

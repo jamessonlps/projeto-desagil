@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +33,7 @@ class PavimentoEndpointTest {
 	private Map<String, String> args;
 	private Pavimento pavimento;
 	private PavimentoDAO dao;
+	private Map<String, String> resultPost;
 	
 	@BeforeAll
 	public static void initialSetUp() throws IOException {
@@ -45,54 +47,43 @@ class PavimentoEndpointTest {
 		dao = new PavimentoDAO();
 		dao.deleteAll();
 		
+		pavimento = new Pavimento(123456, 2222, "Stairway to Heaven", "Jimmy Page");
+		
+		args.put("codigo", "123456");
+		resultPost = endpoint.post(args, pavimento);
 	}
 	
 
 	@Test
 	public void postAndGet() throws APIException {
+		assertTrue(resultPost.containsKey("date"));
 		
-		pavimento = new Pavimento(130002001, "Pavimento Teste 01", "Victor");
-		
-		Map<String, String> result = endpoint.post(args, pavimento);
-		assertTrue(result.containsKey("date"));
-		
-		args.put("codigo", "130002001");
 		Pavimento pavimentoGet = endpoint.get(args);
-		assertEquals(130002001, pavimentoGet.getCodigo());
-		
-		
+		assertEquals(123456, pavimentoGet.getCodigo());
+				
 	}
 	
 	@Test
 	public void postPutAndGet() throws APIException {
-		pavimento = new Pavimento(130002002, "Pavimento Teste 02", "Victor");
-		Map<String, String> resultPost = endpoint.post(args, pavimento);
 		assertTrue(resultPost.containsKey("date"));
 		
-		
-		pavimento.setResponsavel("Jamesson");
-		args.put("codigo", "130002002");
+		pavimento.setTitulo("This is NOT Heaven");
 		Map<String, String> resultPut = endpoint.put(args, pavimento);
 		assertTrue(resultPut.containsKey("date"));
 		
-		
 		Pavimento pavimentoGet = endpoint.get(args);
-		assertEquals(130002002, pavimentoGet.getCodigo());
-		assertEquals("Pavimento Teste 02", pavimentoGet.getTitulo());
-		assertEquals("Jamesson", pavimentoGet.getResponsavel());
-		
+		assertEquals(123456, pavimentoGet.getCodigo());
+		assertEquals("This is NOT Heaven", pavimentoGet.getTitulo());
 	}
 	
 	@Test
 	public void postDeleteAndGet() throws APIException {
-		pavimento = new Pavimento(130002003, "Pavimento Teste 03", "Victor");
-		Map<String, String> resultPost = endpoint.post(args, pavimento);
 		assertTrue(resultPost.containsKey("date"));
-		
-		args.put("codigo", "130002003");
+
 		Map<String, String> resultDelete = endpoint.delete(args);
 		assertTrue(resultDelete.containsKey("date"));
 		
+				
 		APIException exception = assertThrows(APIException.class, () -> {
 			endpoint.get(args);
 			

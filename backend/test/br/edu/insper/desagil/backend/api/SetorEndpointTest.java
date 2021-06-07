@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,11 +28,12 @@ import br.edu.insper.desagil.backend.db.SetorDAO;
 import br.edu.insper.desagil.backend.model.Setor;
 
 
-class SetorEndpointTest
+class SetorEndpointTest {
 	private SetorEndpoint endpoint;
 	private Map<String, String> args;
 	private Setor setor;
-	private setorDAO dao;
+	private SetorDAO dao;
+	private Map<String, String> resultPost;
 	
 	@BeforeAll
 	public static void initialSetUp() throws IOException {
@@ -45,71 +47,43 @@ class SetorEndpointTest
 		dao = new SetorDAO();
 		dao.deleteAll();
 		
+		setor= new Setor(34, 1111, "Estacao 9 3/4", 12345);
+		
+		args.put("codigo", "34");
+		resultPost = endpoint.post(args, setor);
 	}
 	
 
 	@Test
 	public void postAndGet() throws APIException {
+		assertTrue(resultPost.containsKey("date"));
 		
-		ArrayList<String> docs = new ArrayList<>();
-		docs.add(223);
-		docs.add(3301);
-        
-		setor = new Setor(12, 10102, "Toca do Larry", "Gabriel", 1212, docs);
-		
-		Map<String, String> result = endpoint.post(args, setor);
-		assertTrue(result.containsKey("date"));
-		
-		args.put("codigo", "12");
 		Setor setorGet = endpoint.get(args);
-		assertEquals(12, setorGet.getCodigo());
-		
-		
+		assertEquals(34, setorGet.getCodigo());
+				
 	}
 	
 	@Test
 	public void postPutAndGet() throws APIException {
-		
-		ArrayList<String> docs = new ArrayList<>();
-		docs.add(223);
-		docs.add(3301);
-        
-		setor = new Setor(12, 10102, "Toca do Larry", "Gabriel", 1212, docs);
-		
-		Map<String, String> resultPost = endpoint.post(args, setor);
 		assertTrue(resultPost.containsKey("date"));
 		
-		
-		setor.setResponsavel("James");
-		args.put("codigo", "12");
+		setor.setTitulo("Estacao Simples de Trem");
 		Map<String, String> resultPut = endpoint.put(args, setor);
 		assertTrue(resultPut.containsKey("date"));
 		
-		
 		Setor setorGet = endpoint.get(args);
-		assertEquals(12, setorGet.getCodigo());
-		assertEquals(10102, setorGet.getObra());
-		assertEquals(1212, setorGet.getIdPavimento());
-		assertEquals("Toca do Larry", setorGet.getTitulo());
-		assertEquals("James", setorGet.getResponsavel());
-		
+		assertEquals(34, setorGet.getCodigo());
+		assertEquals("Estacao Simples de Trem", setorGet.getTitulo());
 	}
 	
 	@Test
 	public void postDeleteAndGet() throws APIException {
-		ArrayList<String> docs = new ArrayList<>();
-		docs.add(223);
-		docs.add(3301);
-        
-		setor = new Setor(12, 10102, "Toca do Larry", "Gabriel", 1212, docs);
-		
-		Map<String, String> resultPost = endpoint.post(args, setor);
 		assertTrue(resultPost.containsKey("date"));
-		
-		args.put("codigo", "12");
+
 		Map<String, String> resultDelete = endpoint.delete(args);
 		assertTrue(resultDelete.containsKey("date"));
 		
+				
 		APIException exception = assertThrows(APIException.class, () -> {
 			endpoint.get(args);
 			

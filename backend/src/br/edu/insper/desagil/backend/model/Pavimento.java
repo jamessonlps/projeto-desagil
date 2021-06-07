@@ -41,6 +41,10 @@ public class Pavimento extends FirestoreEntity {
 	}
 
 	
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
+	}
+
 	public List<Integer> getApartamentos() {
 		return apartamentos;
 	}
