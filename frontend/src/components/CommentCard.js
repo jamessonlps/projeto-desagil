@@ -1,14 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { formatData } from '../utils/FormatDate';
 
-export default function DocumentCard(props) {
+export default function CommentCard(props) {
     return (
-        <View 
-            style={styles.cardContainer}>
-            <Text style={styles.cardTitle}>{props.titulo}</Text>
-            <Text style={styles.cardDescription}>{props.tipo}</Text>
-            <Text style={styles.cardDescription}>Data de publicação: {props.dataCriacao}</Text>
-            <Text style={styles.cardDescription}>{props.ultimaModificacao}</Text>
+        <View style={styles.cardContainer}>
+            <Text style={styles.cardDescription}>{props.texto}</Text>
+            <Text style={styles.cardDate}>Data de publicação: {formatData(props.dataCriacao)}</Text>
+            <Text style={styles.cardDate}>Última modificação: {formatData(props.ultimaModificacao)}</Text>
         </View>
     );
 }
@@ -30,5 +29,9 @@ const styles = StyleSheet.create({
     cardDescription: {
         fontSize: 18,
         fontWeight: 'normal'
+    },
+    cardDate: {
+        fontStyle: 'italic',
+        fontSize: 17
     }
 });
