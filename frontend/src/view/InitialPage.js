@@ -2,17 +2,27 @@ import React from 'react';
 import { View, Button, StatusBar, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-export default function Page1() {
+import client from '../../client';
+import LogCard from '../components/LogCard';
+
+export default function InitialPage() {
     const navigation = useNavigation();
 
     return (
         <View style={styles.container}>
+            <Text style={styles.logTitle}>Registros</Text>
+            <View style={styles.lineStyle} />
+            <LogCard />
+            <LogCard />
+            <LogCard />
+            <LogCard />
+            <LogCard />
             <View style={styles.containerText}>
                 <TouchableOpacity
                     style={styles.qrbutton} 
                     onPress={() => navigation.navigate('QR Code Scanner')}
                 >
-                    <Text style={styles.buttonText}>Ler QR Code</Text>
+                    <Image resizeMode='center' source={require('../icons/qr-code-whitebg(2).png')} width={64} height={64} />
                 </TouchableOpacity>
             </View>
         </View>
@@ -24,26 +34,40 @@ const styles = StyleSheet.create({
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
+        padding: 15
     },
     containerText: {
-        fontSize: 20,
         flex: 1,
         alignContent: 'center',
-        justifyContent: 'center',
-        paddingLeft: 50,
-        paddingRight: 50,
+        justifyContent: 'center'
     },
     qrbutton: {
-        color: 'white',
-        backgroundColor: '#00ffff',
         alignItems: 'center',
         justifyContent: 'center',
-        width: 150,
-        height: 50,
         alignSelf: 'center',
-        borderRadius: 15
+        // borderColor: 'red',
+        width: 128,
+        height: 128,
+        // borderWidth: 3,
+        borderRadius: 100,
+        backgroundColor: '#ffffff',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.20,
+        shadowRadius: 1.41,
+        elevation: 2,
     },
-    buttonText: {
-        fontSize: 24
+    logTitle: {
+        fontSize: 20,
+        fontWeight: 'bold'
+    },
+    lineStyle: {
+        borderWidth: 0.5,
+        borderColor:'gray',
+        marginBottom: 10,
+        marginTop: 5
     }
 })

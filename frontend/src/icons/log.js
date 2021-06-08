@@ -1,31 +1,31 @@
 import * as React from "react";
 import Svg, { Path } from "react-native-svg";
 
-function Log(props) {
+export default function LogCard(props) {
   return (
     <Svg
       xmlns="http://www.w3.org/2000/svg"
-      width={48}
-      height={48}
+      width={32}
+      height={32}
       viewBox="0 0 512 512"
       {...props}
     >
       <Path
         xmlns="http://www.w3.org/2000/svg"
         d="M392 488H120a48 48 0 01-48-48V72a48 48 0 0148-48h224l96 96v320a48 48 0 01-48 48z"
-        fill="#f1f2f2"
+        fill="#fff"
         data-original="#8690fa"
       />
       <Path
         xmlns="http://www.w3.org/2000/svg"
         d="M72 360h368v80a48 48 0 01-48 48H120a48 48 0 01-48-48v-80zM440 120h-48a48 48 0 01-48-48V24z"
-        fill="#f1f2f2"
+        fill="#fff"
         data-original="#cfd2fc"
       />
       <Path
         xmlns="http://www.w3.org/2000/svg"
         d="M263.511 135.974a56.016 56.016 0 00-66.233-9.665l20.978 20.979a16 16 0 01-22.627 22.627l-20.979-20.978a56 56 0 0074.795 76.48l50.362 59.165a24 24 0 1033.116-33.116L273.758 201.1a56.015 56.015 0 00-10.247-65.126z"
-        fill="#fff"
+        fill="#18eeab"
         data-original="#ffffff"
       />
       <Path
@@ -41,7 +41,5 @@ function Log(props) {
         data-original="#000000"
       />
     </Svg>
-  );
+  )
 }
-
-export default Log;
