@@ -16,7 +16,8 @@ public class Setor extends FirestoreEntity {
 	
 	public Setor() {
 		super();
-		// não faz nada
+		this.documentos = new ArrayList<>();
+		this.observacoes = new ArrayList<>();
 	}
 	
 	public Setor(int codigo, int obra, String titulo, int idPavimento) {
@@ -75,6 +76,10 @@ public class Setor extends FirestoreEntity {
 
 	public void setObservacoes(List<String> observacoes) {
 		this.observacoes = observacoes;
+	}
+	
+	public void addObservacao(String key) {
+		this.observacoes.add(key);
 	}
 
 	@Override // -- método requerido pelo FirestoreEntity

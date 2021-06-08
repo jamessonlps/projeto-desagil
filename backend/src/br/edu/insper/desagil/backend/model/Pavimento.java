@@ -16,7 +16,8 @@ public class Pavimento extends FirestoreEntity {
 	
 	public Pavimento() {
 		super();
-		// não faz nada
+		this.documentos = new ArrayList<>();
+		this.observacoes = new ArrayList<>();
 	}
 	
 	public Pavimento(int codigo, int obra, String titulo, String responsavel) {
@@ -75,6 +76,10 @@ public class Pavimento extends FirestoreEntity {
 		this.observacoes = observacoes;
 	}
 
+	public void addObservacao(String key) {
+		this.observacoes.add(key);
+	}
+	
 	@Override // -- método requerido pelo FirestoreEntity
 	public String key() {
 		return Integer.toString(codigo);

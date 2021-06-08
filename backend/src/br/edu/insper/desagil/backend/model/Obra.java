@@ -17,6 +17,8 @@ public class Obra extends FirestoreEntity {
 
 	public Obra() {
 		super();
+		this.logs = new ArrayList<>();
+		this.alertas = new ArrayList<>();
 	}
 	
 	public Obra(int codigo, String titulo) {
@@ -26,6 +28,7 @@ public class Obra extends FirestoreEntity {
 		
 		this.logs = new ArrayList<>();
 		this.alertas = new ArrayList<>();
+		
 	}
 
 	public String getTitulo() {
@@ -50,6 +53,10 @@ public class Obra extends FirestoreEntity {
 
 	public void setLogs(List<String> logs) {
 		this.logs = logs;
+	}
+	
+	public void addLog(String log) {
+		this.logs.add(log);
 	}
 
 	public List<String> getAlertas() {
