@@ -8,14 +8,12 @@ public class Observacao extends FirestoreAutokeyEntity{
 	private boolean alerta;
 	private String texto;
 	private String dataCriacao;
-	private String ultimaModificacao;
-	
+
 	public Observacao() {
 		super();
 		this.alerta = false;
 		Date data = new Date();
 		this.dataCriacao = data.toString();
-		this.ultimaModificacao = data.toString();
 	}
 	
 	public Observacao(String texto, boolean alerta) {
@@ -24,7 +22,6 @@ public class Observacao extends FirestoreAutokeyEntity{
 		this.texto = texto;
 		Date data = new Date();
 		this.dataCriacao = data.toString();
-		this.ultimaModificacao = data.toString();
 	}
 	
 	public boolean isAlerta() {
@@ -38,12 +35,6 @@ public class Observacao extends FirestoreAutokeyEntity{
 	}
 	public void setTexto(String texto) {
 		this.texto = texto;
-	}
-	public String getUltimaModificacao() {
-		return ultimaModificacao;
-	}
-	public void setUltimaModificacao(String ultimaModificacao) {
-		this.ultimaModificacao = ultimaModificacao;
 	}
 
 	public String getDataCriacao() {

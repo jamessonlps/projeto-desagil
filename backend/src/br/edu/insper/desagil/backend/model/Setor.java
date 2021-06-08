@@ -12,6 +12,7 @@ public class Setor extends FirestoreEntity {
 	private String responsavel;
 	private int idPavimento;			// id do pavimento a que se refere
 	private List<Integer> documentos; 	// Lista com os id's dos documentos
+	private List<String> observacoes;	// Lista com as key's de observacoes
 	
 	public Setor() {
 		super();
@@ -25,7 +26,7 @@ public class Setor extends FirestoreEntity {
 		this.titulo = titulo;
 		this.idPavimento = idPavimento;
 		this.documentos = new ArrayList<>();
-		
+		this.observacoes = new ArrayList<>();
 	}
 
 	public int getCodigo() {
@@ -39,7 +40,6 @@ public class Setor extends FirestoreEntity {
 	public String getTitulo() {
 		return titulo;
 	}
-	
 	
 	public void setTitulo(String titulo) {
 		this.titulo = titulo;
@@ -65,8 +65,16 @@ public class Setor extends FirestoreEntity {
 		return documentos;
 	}
 	
-	public void addDocumento(Documento doc) {
-		this.documentos.add(doc.getCodigo());
+	public void setDocumentos(List<Integer> documentos) {
+		this.documentos = documentos;
+	}
+
+	public List<String> getObservacoes() {
+		return observacoes;
+	}
+
+	public void setObservacoes(List<String> observacoes) {
+		this.observacoes = observacoes;
 	}
 
 	@Override // -- método requerido pelo FirestoreEntity

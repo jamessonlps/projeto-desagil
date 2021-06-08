@@ -58,6 +58,7 @@ public class DocumentoEndpoint extends Endpoint<Documento> {
 		
 		Map<String, String> body = new HashMap<>();
 		body.put("date", date.toString());
+		body.put("key", Integer.toString(documento.getCodigo()));
 		
 		return body;
 

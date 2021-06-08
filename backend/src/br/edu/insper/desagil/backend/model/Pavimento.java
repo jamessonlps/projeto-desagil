@@ -6,12 +6,13 @@ import java.util.List;
 import br.edu.insper.desagil.backend.core.firestore.FirestoreEntity;
 
 public class Pavimento extends FirestoreEntity {
-	private int codigo; // código do Pavimento --> Pode ser da forma AB0123 --> para outras referencias dentro dele, podemos complementar AB0123___
-	private int obra; 
-	private String titulo; // exibido pelo FrontEnd
-	private String responsavel;
-	private List<Integer> documentos; // Lista com os id's dos documentos
-	private List<Integer> apartamentos; // Lista com os id's dos apartamentos
+	private int codigo; 					// código do Pavimento 
+	private int obra; 						// codigo da Obra a que se refere
+	private String titulo; 					// exibido pelo FrontEnd
+	private String responsavel;				// exibido pelo Front
+	private List<Integer> documentos; 		// Lista com os id's dos Documentos
+	private List<Integer> setores; 			// Lista com os id's dos Setores
+	private List<String> observacoes;		// Lista com as keys das Observações
 	
 	public Pavimento() {
 		super();
@@ -25,6 +26,7 @@ public class Pavimento extends FirestoreEntity {
 		this.titulo = titulo;
 		this.responsavel = responsavel;
 		this.documentos = new ArrayList<>();
+		this.observacoes = new ArrayList<>();
 		
 	}
 
@@ -45,12 +47,12 @@ public class Pavimento extends FirestoreEntity {
 		this.titulo = titulo;
 	}
 
-	public List<Integer> getApartamentos() {
-		return apartamentos;
+	public List<Integer> getSetores() {
+		return setores;
 	}
 
-	public void setApartamentos(List<Integer> apartamentos) {
-		this.apartamentos = apartamentos;
+	public void setSetores(List<Integer> setores) {
+		this.setores = setores;
 	}
 
 	public String getResponsavel() {
@@ -65,8 +67,12 @@ public class Pavimento extends FirestoreEntity {
 		return documentos;
 	}
 	
-	public void addDocumento(Documento doc) {
-		this.documentos.add(doc.getCodigo());
+	public List<String> getObservacoes() {
+		return observacoes;
+	}
+	
+	public void setObservacoes(List<String> observacoes) {
+		this.observacoes = observacoes;
 	}
 
 	@Override // -- método requerido pelo FirestoreEntity

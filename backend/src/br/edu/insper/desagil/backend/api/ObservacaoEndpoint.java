@@ -32,18 +32,18 @@ public class ObservacaoEndpoint extends Endpoint<Observacao> {
 	
 	@Override 
 	public List<Observacao> getList(Map<String, String> args) throws APIException {
-		List<Observacao> documentos;
+		List<Observacao> observacoes;
 		ObservacaoDAO dao = new ObservacaoDAO();
 		String arg = args.get("observacoes");
 		List<String> codigos = split(arg,  ",");
 		
 		try {
-			documentos = dao.retrieve(codigos);
+			observacoes = dao.retrieve(codigos);
 		} catch (DBException exception) {
 			throw new DatabaseRequestException(exception);
 		}
 		
-		return documentos;
+		return observacoes;
 		
 	}
 	
@@ -57,13 +57,11 @@ public class ObservacaoEndpoint extends Endpoint<Observacao> {
 		} catch (DBException exception) {
 			throw new DatabaseRequestException(exception);
 		}
+		Map<String, String> body = new HashMap<>();
+		body.put("date", date.toString());
+		body.put("key", observacao.getKey());
 		
-		
-		Map<String, String> response = new HashMap<>();
-		response.put("date", date.toString());
-		response.put("key", observacao.getKey());
-		
-		return response;
+		return body;
 
 	}
 	
@@ -78,6 +76,8 @@ public class ObservacaoEndpoint extends Endpoint<Observacao> {
 	    }
 	    Map<String, String> body = new HashMap<>();
 	    body.put("date", date.toString());
+	    body.put("key",  observacao.getKey());
+	    
 	    return body;
 	}
 	

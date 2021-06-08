@@ -8,36 +8,31 @@ import br.edu.insper.desagil.backend.core.firestore.FirestoreEntity;
 
 public class Documento extends FirestoreEntity {
 	private int codigo;			// Vamos acessar o documento pela id
-	private int obra;		// Guarda o id da obra a qual se refere
-	private String titulo;	// Será exibido pelo front-end
-	private String tipo; 	// se Planta Arquitetônica, se Orçamento, etc..
-	private int referencia; // id do Pavimento / Apartamento a que o documento se refere.
-	private String url;		// Link para acessarmos o documento
-	private String dataCriacao;		// frontEnd -- fixo
-	private String ultimaModificacao;	// frontEnd	
+	private int obra;			// Guarda o id da obra a qual se refere
+	private String titulo;		// Será exibido pelo front-end
+	private String descricao; 	// Breve descrição sobre o que se trata o documento 
+	private int referencia; 	// id do Pavimento / Apartamento a que o documento se refere.
+	private String url;			// Link para acessarmos o documento
+	private String dataCriacao;				// frontEnd -- fixo
 	private List<Observacao> observacoes;	// frontEnd
 	
 	public Documento() {
 		super();
 		Date date = new Date();
 		this.dataCriacao = date.toString();
-		this.ultimaModificacao = date.toString();
 	}
 	
-	public Documento(int codigo, int obra, String titulo, String tipo, String url) {
+	public Documento(int codigo, int obra, String titulo, String descricao, String url) {
 		super();
 		this.codigo = codigo;
 		this.obra = obra;
 		this.titulo = titulo;
-		this.tipo = tipo;
+		this.descricao = descricao;
 		this.url = url;
 		
 		Date date = new Date();
-		this.dataCriacao = date.toString();
-		this.ultimaModificacao = date.toString();
-		
+		this.dataCriacao = date.toString();		
 		this.observacoes = new ArrayList<Observacao>();
-	
 	}
 	
 	public int getCodigo() {
@@ -56,14 +51,6 @@ public class Documento extends FirestoreEntity {
 		this.url = url;
 	}
 
-	public String getUltimaModificacao() {
-		return ultimaModificacao;
-	}
-
-	public void setUltimaModificacao(String ultimaModificacao) {
-		this.ultimaModificacao = ultimaModificacao;
-	}
-
 	public String getTitulo() {
 		return titulo;
 	}
@@ -76,12 +63,12 @@ public class Documento extends FirestoreEntity {
 		return dataCriacao;
 	}
 
-	public String getTipo() {
-		return tipo;
+	public String getDescricao() {
+		return descricao;
 	}
 
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
 	}
 
 	public int getReferencia() {
@@ -95,9 +82,9 @@ public class Documento extends FirestoreEntity {
 	public List<Observacao> getObservacoes() {
 		return observacoes;
 	}
-	
-	public void addObservacao(Observacao obs) {
-		this.observacoes.add(obs);
+
+	public void setObservacoes(List<Observacao> observacoes) {
+		this.observacoes = observacoes;
 	}
 
 	@Override
