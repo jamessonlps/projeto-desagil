@@ -6,8 +6,8 @@ export default function CommentCard(props) {
     return (
         <View style={styles.cardContainer}>
             <Text style={styles.cardDescription}>{props.texto}</Text>
-            <Text style={styles.cardDate}>Data de publicação: {formatData(props.dataCriacao)}</Text>
-            <Text style={styles.cardDate}>Última modificação: {formatData(props.ultimaModificacao)}</Text>
+            <Text style={styles.cardDate}>{formatData(props.dataCriacao)}</Text>
+            <View style={{borderWidth: 0.15, borderColor: "#000000", marginTop: 20}} />
         </View>
     );
 }
@@ -16,22 +16,19 @@ const styles = StyleSheet.create({
     cardContainer: {
         display: 'flex',
         flexDirection: 'column',
-        padding: 15,
-        margin: 10,
-        borderWidth: 3,
-        borderRadius: 15,
-        borderColor: '#0000ff'
-    },
-    cardTitle: {
-        fontSize: 20,
-        fontWeight: 'bold'
+        paddingTop: 2,
+        paddingBottom: 2,
+        paddingRight: 15,
+        paddingLeft: 15
     },
     cardDescription: {
         fontSize: 18,
-        fontWeight: 'normal'
+        fontWeight: 'normal',
+        color: '#000'
     },
     cardDate: {
         fontStyle: 'italic',
-        fontSize: 17
+        fontSize: 14,
+        color: 'gray'
     }
 });

@@ -4,10 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import client from '../../client';
 import DocumentCard from '../components/DocumentCard';
 import CommentCard from '../components/CommentCard';
-
-import PDFIcon from '../icons/pdf';
-import Warning from '../icons/warning';
-import LogIcon from '../icons/log';
+import AlertCard from '../components/AlertCard';
 
 export default function GeneralView({ route }) {
     const [loading, setLoading] = useState(true);
@@ -46,13 +43,13 @@ export default function GeneralView({ route }) {
         <ScrollView style={styles.outerContainer}>
             <View>
                 <Text style={styles.mainTitle}>{route.params?.titulo}</Text>
-                <Text>Responsável pela obra: {route.params?.responsavel}</Text>
+                <Text style={{fontSize: 18}}>Responsável pela obra: {route.params?.responsavel}</Text>
             </View>
 
             <View>
                 <View style={styles.subTitleContainer}>
-                    <PDFIcon />
                     <Text style={styles.mainTitle}>Documentos</Text>
+                    <View style={styles.lineStyle} />
                 </View>
                 <View>
                     {
@@ -62,7 +59,7 @@ export default function GeneralView({ route }) {
                             <TouchableOpacity key={index} onPress={() => navigation.navigate('PDFView', item)}>
                                 <DocumentCard 
                                     titulo={item.titulo}
-                                    tipo={item.tipo}
+                                    descricao={item.descricao}
                                     dataCriacao={item.dataCriacao}
                                     ultimaModificacao={item.ultimaModificacao}
                                 />
@@ -75,18 +72,17 @@ export default function GeneralView({ route }) {
 
             <View>
                 <View style={styles.subTitleContainer}>
-                    <Warning />
                     <Text style={styles.mainTitle}>Alertas</Text>
+                    <View style={styles.lineStyle} />
                 </View>
                     {
                         logLoading ? (<ActivityIndicator size={50} />) 
                         :
                         log.map((item, index) => item.alerta ? (
                             <View key={index}>
-                                <CommentCard 
+                                <AlertCard 
                                     texto={item.texto}
                                     dataCriacao={item.dataCriacao}
-                                    ultimaModificacao={item.ultimaModificacao}
                                 />
                             </View>
                         ) : null)
@@ -95,8 +91,8 @@ export default function GeneralView({ route }) {
 
             <View>
                 <View style={styles.subTitleContainer}>
-                    <LogIcon />
-                    <Text style={styles.mainTitle}>Comentários</Text>
+                    <Text style={styles.mainTitle}>Observações</Text>
+                    <View style={styles.lineStyle} />
                 </View>
                     {
                         logLoading ? (<ActivityIndicator size={50} />) 
@@ -106,7 +102,6 @@ export default function GeneralView({ route }) {
                                 <CommentCard 
                                     texto={item.texto}
                                     dataCriacao={item.dataCriacao}
-                                    ultimaModificacao={item.ultimaModificacao}
                                 />
                             </View>
                         ) : null)
@@ -127,16 +122,18 @@ const styles = StyleSheet.create({
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
-        paddingLeft: 20,
-        paddingRight: 20,
+        paddingLeft: 15,
+        paddingRight: 15,
     },
     mainTitle: {
-        fontSize: 30,
-        fontWeight: 'bold'
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: "#2D2A9B"
     },
     subTitleContainer: {
         display: 'flex',
-        flexDirection: 'row'
+        flexDirection: 'column',
+        marginTop: 10
     },
     inputContainer: {
         paddingTop: 15,
@@ -145,5 +142,11 @@ const styles = StyleSheet.create({
     boxInput: {
         borderWidth: 3,
         borderColor: 'black'
+    },
+    lineStyle: {
+        borderWidth: 0.5,
+        borderColor:'gray',
+        marginBottom: 10,
+        marginTop: 5
     }
 });

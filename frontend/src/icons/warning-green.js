@@ -1,7 +1,7 @@
 import * as React from "react";
 import Svg, { Circle, Path } from "react-native-svg";
 
-export default function AlertIcon(props) {
+export default function WarningGreen(props) {
   return (
     <Svg
       xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ export default function AlertIcon(props) {
         cx={236.966}
         cy={236.966}
         r={236.966}
-        fill="#2385a2"
+        fill="#18eeab"
         data-original="#e79e2d"
       />
       <Path
