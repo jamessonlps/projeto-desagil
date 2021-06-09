@@ -24,7 +24,7 @@ public class SetorEndpoint extends Endpoint<Setor> {
 		SetorDAO dao = new SetorDAO();
 		Setor setor;
 		try {
-			setor = dao.retrieve(args.get("codigo"));
+			setor = dao.retrieve(args.get("key"));
 		} catch (DBException exception) {
             throw new DatabaseRequestException(exception);
 		}
@@ -85,7 +85,7 @@ public class SetorEndpoint extends Endpoint<Setor> {
 		SetorDAO dao = new SetorDAO();
 		Date date;
 	    try {
-	        date = dao.delete(args.get("codigo"));
+	        date = dao.delete(args.get("key"));
 	    } catch (DBException exception) {
             throw new DatabaseRequestException(exception);
 	    }

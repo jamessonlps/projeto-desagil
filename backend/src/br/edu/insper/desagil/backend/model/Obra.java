@@ -7,12 +7,9 @@ import br.edu.insper.desagil.backend.core.firestore.FirestoreAutokeyEntity;
 import br.edu.insper.desagil.backend.core.firestore.FirestoreEntity;
 
 public class Obra extends FirestoreAutokeyEntity  {
-
-
 	private String titulo;
 	private String endereco;
 	private String responsavel;
-	
 	private List<String> logs;
 	private List<String> alertas;
 
@@ -66,6 +63,10 @@ public class Obra extends FirestoreAutokeyEntity  {
 
 	public void setAlertas(List<String> alertas) {
 		this.alertas = alertas;
+	}
+	
+	public void addAlerta(String key) {
+		this.alertas.add(key);
 	}
 
 	public String getEndereco() {

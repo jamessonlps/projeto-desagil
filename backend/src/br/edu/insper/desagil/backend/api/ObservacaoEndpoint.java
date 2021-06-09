@@ -21,7 +21,6 @@ public class ObservacaoEndpoint extends Endpoint<Observacao> {
 		super("/observacao");
 	}
 	
-	
 	@Override
 	public Observacao get(Map<String, String> args) throws APIException {
 		ObservacaoDAO dao = new ObservacaoDAO();
@@ -65,7 +64,7 @@ public class ObservacaoEndpoint extends Endpoint<Observacao> {
 		body.put("key", observacao.getKey());
 		body.put("date", date.toString());
 		
-		Boolean logResult = addLog(args, date);
+		Boolean logResult = addLog(args, date, observacao.isAlerta());
 		body.put("logResult", logResult.toString());
 		
 		Boolean addKeyResult = addKey(args, observacao);
@@ -77,70 +76,99 @@ public class ObservacaoEndpoint extends Endpoint<Observacao> {
 
 
 	private boolean addKey(Map<String, String> args, Observacao observacao) throws APIException {
-		try {
+		Boolean result = false;
+		
+		try {			
+			Map<String, String> argsObra = new HashMap<>();
+			String keyObra = null;
+			
 			if (args.containsKey("pavimento")) {
 				
 				Map<String, String> argsPavimento= new HashMap<>();
-				argsPavimento.put("codigo", args.get("pavimento"));
+				argsPavimento.put("key", args.get("pavimento"));
 				
 				PavimentoEndpoint pavimentoEndpoint = new PavimentoEndpoint();
-				
 				Pavimento pavimento = pavimentoEndpoint.get(argsPavimento);
+				
 				pavimento.addObservacao(observacao.getKey());
 				pavimentoEndpoint.put(argsPavimento, pavimento);
-				return true;
+				
+				keyObra = pavimento.getObra();
+				result = true;
 			}
 			
 			else if (args.containsKey("setor")) {
 				Map<String, String> argsSetor= new HashMap<>();
-				argsSetor.put("codigo", args.get("setor"));
+				argsSetor.put("key", args.get("setor"));
 				
 				SetorEndpoint setorEndpoint = new SetorEndpoint();
-				
 				Setor setor= setorEndpoint.get(argsSetor);
+				
 				setor.addObservacao(observacao.getKey());
 				setorEndpoint.put(argsSetor, setor);
-				return true;
+				
+				keyObra = setor.getObra();
+				result = true;
 			}
 			
-			else {
-				return false;
-			}			
+			if (observacao.isAlerta()) {
+				argsObra.put("key", keyObra);
+				ObraEndpoint obraEndpoint = new ObraEndpoint();
+				Obra obra = obraEndpoint.get(argsObra);
+				obra.addAlerta(observacao.getKey());
+				obraEndpoint.put(argsObra, obra);
+				result = true;
+			}
 		} catch (Exception e) {
-			return false;
+			result = false;
 		}
 		
+		return result;
 	}
 
 
-	private boolean addLog(Map<String, String> args, Date date) throws APIException {
+	private boolean addLog(Map<String, String> args, Date date, Boolean alerta) throws APIException {
 		try {
 			Map<String, String> argsObra= new HashMap<>();
-			argsObra.put("codigo", args.get("obra"));
-			ObraEndpoint obraEndpoint = new ObraEndpoint();
-			Obra obra = obraEndpoint.get(argsObra);
 			String titulo = "";
 			
 			if (args.containsKey("pavimento")) {				
 				Map<String, String> argsPavimento= new HashMap<>();
-				argsPavimento.put("codigo", args.get("pavimento"));				
+				argsPavimento.put("key", args.get("pavimento"));				
+				
 				PavimentoEndpoint pavimentoEndpoint = new PavimentoEndpoint();
 				Pavimento pavimento = pavimentoEndpoint.get(argsPavimento);
+
+				argsObra.put("key", pavimento.getObra());
 				titulo = pavimento.getTitulo();
 			}
 			
 			else if (args.containsKey("setor")) {
 				Map<String, String> argsSetor= new HashMap<>();
-				argsSetor.put("codigo", args.get("setor"));
+				argsSetor.put("key", args.get("setor"));
+				
 				SetorEndpoint setorEndpoint = new SetorEndpoint();
 				Setor setor= setorEndpoint.get(argsSetor);
+				
+				argsObra.put("key",  setor.getObra());
 				titulo = setor.getTitulo();
 			}
 			
+			ObraEndpoint obraEndpoint = new ObraEndpoint();
+			Obra obra = obraEndpoint.get(argsObra);
+			String log;
 
-			String log = new SimpleDateFormat("dd/MM/yyyy - HH:mm").format(date) 
-					+ " - Uma observação foi adicionada ao "
-					+ titulo;
+			if (alerta) {
+				log = new SimpleDateFormat("dd/MM/yyyy - HH:mm").format(date) 
+						+ " - Um alerta foi adicionado ao "
+						+ titulo;
+			}
+			
+			else {
+				log = new SimpleDateFormat("dd/MM/yyyy - HH:mm").format(date) 
+						+ " - Uma observação foi adicionada ao "
+						+ titulo;
+			}
 			
 			obra.addLog(log);
 			obraEndpoint.put(argsObra, obra);

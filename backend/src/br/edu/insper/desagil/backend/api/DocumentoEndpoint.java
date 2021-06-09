@@ -22,7 +22,7 @@ public class DocumentoEndpoint extends Endpoint<Documento> {
 		DocumentoDAO dao = new DocumentoDAO();
 		Documento documento;
 		try {
-			documento = dao.retrieve(args.get("codigo"));
+			documento = dao.retrieve(args.get("key"));
 		} catch (DBException exception) {
             throw new DatabaseRequestException(exception);
 		}
@@ -43,7 +43,6 @@ public class DocumentoEndpoint extends Endpoint<Documento> {
 		}
 		
 		return documentos;
-		
 	}
 	
 	@Override
@@ -83,7 +82,7 @@ public class DocumentoEndpoint extends Endpoint<Documento> {
 		DocumentoDAO dao = new DocumentoDAO();
 		Date date;
 	    try {
-	        date = dao.delete(args.get("codigo"));
+	        date = dao.delete(args.get("key"));
 	    } catch (DBException exception) {
             throw new DatabaseRequestException(exception);
 	    }

@@ -21,7 +21,7 @@ public class TagEndpoint extends Endpoint<Tag> {
 		TagDAO dao = new TagDAO();
 		Tag tag;
 		try {
-			tag = dao.retrieve(args.get("id"));
+			tag = dao.retrieve(args.get("key"));
 		} catch (DBException exception) {
             throw new DatabaseRequestException(exception);
 		}
@@ -65,7 +65,7 @@ public class TagEndpoint extends Endpoint<Tag> {
 	    TagDAO dao = new TagDAO();
 	    Date date;
 	    try {
-	        date = dao.delete(args.get("id"));
+	        date = dao.delete(args.get("key"));
 	    } catch (DBException exception) {
             throw new DatabaseRequestException(exception);
 	    }

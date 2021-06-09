@@ -3,26 +3,26 @@ package br.edu.insper.desagil.backend.model;
 import br.edu.insper.desagil.backend.core.firestore.FirestoreAutokeyEntity;
 
 public class Tag extends FirestoreAutokeyEntity {
-	private int obra;
-	private int alvo;
+	private String obra;
+	private String alvo;
 	private String tipo;
 	
 	public Tag() {
 		super();
 	}
 
-	public Tag(int id, int alvo, int obra, String tipo) {
+	public Tag(String alvo, String obra, String tipo) {
 		super();
 		this.alvo = alvo;
 		this.obra = obra;
 		this.tipo = tipo;
 	}
 	
-	public int getAlvo() {
+	public String getAlvo() {
 		return alvo;
 	}
 
-	public void setAlvo(int alvo) {
+	public void setAlvo(String alvo) {
 		this.alvo = alvo;
 	}
 
@@ -34,7 +34,7 @@ public class Tag extends FirestoreAutokeyEntity {
 		this.tipo = tipo;
 	}
 	
-	public int getObra() {
+	public String getObra() {
 		return obra;
 	}
 

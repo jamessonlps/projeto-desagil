@@ -21,7 +21,7 @@ public class ObraEndpoint extends Endpoint<Obra> {
 		ObraDAO dao = new ObraDAO();
 		Obra obra;
 		try {
-			obra = dao.retrieve(args.get("codigo"));
+			obra = dao.retrieve(args.get("key"));
 		} catch (DBException exception) {
             throw new DatabaseRequestException(exception);
 		}
@@ -65,7 +65,7 @@ public class ObraEndpoint extends Endpoint<Obra> {
 		ObraDAO dao = new ObraDAO();
 	    Date date;
 	    try {
-	        date = dao.delete(args.get("codigo"));
+	        date = dao.delete(args.get("key"));
 	    }  catch (DBException exception) {
             throw new DatabaseRequestException(exception);
 	    }

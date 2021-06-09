@@ -25,7 +25,7 @@ public class PavimentoEndpoint extends Endpoint<Pavimento> {
 		PavimentoDAO dao = new PavimentoDAO();
 		Pavimento pavimento;
 		try {
-			pavimento = dao.retrieve(args.get("codigo"));
+			pavimento = dao.retrieve(args.get("key"));
 		} catch (DBException exception) {
             throw new DatabaseRequestException(exception);
 		}
@@ -69,7 +69,7 @@ public class PavimentoEndpoint extends Endpoint<Pavimento> {
 	    PavimentoDAO dao = new PavimentoDAO();
 	    Date date;
 	    try {
-	        date = dao.delete(args.get("codigo"));
+	        date = dao.delete(args.get("key"));
 	    } catch (DBException exception) {
             throw new DatabaseRequestException(exception);
 	    }
