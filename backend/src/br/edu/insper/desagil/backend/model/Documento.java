@@ -4,17 +4,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import br.edu.insper.desagil.backend.core.firestore.FirestoreAutokeyEntity;
 import br.edu.insper.desagil.backend.core.firestore.FirestoreEntity;
 
-public class Documento extends FirestoreEntity {
-	private int codigo;			// Vamos acessar o documento pela id
-	private int obra;			// Guarda o id da obra a qual se refere
-	private String titulo;		// Será exibido pelo front-end
-	private String descricao; 	// Breve descrição sobre o que se trata o documento 
-	private int referencia; 	// id do Pavimento / Apartamento a que o documento se refere.
-	private String url;			// Link para acessarmos o documento
-	private String dataCriacao;				// frontEnd -- fixo
-	private List<Observacao> observacoes;	// frontEnd
+public class Documento extends FirestoreAutokeyEntity {
+
+	private String obra;			// Guarda o id da obra a qual se refere
+	private String titulo;			// Será exibido pelo front-end
+	private String descricao; 		// Breve descrição sobre o que se trata o documento 
+	private String referencia; 		// id do Pavimento / Apartamento a que o documento se refere.
+	private String url;				// Link para acessarmos o documento
+	private String dataCriacao;		// frontEnd -- fixo
 	
 	public Documento() {
 		super();
@@ -22,9 +22,8 @@ public class Documento extends FirestoreEntity {
 		this.dataCriacao = date.toString();
 	}
 	
-	public Documento(int codigo, int obra, String titulo, String descricao, String url) {
+	public Documento(String obra, String titulo, String descricao, String url) {
 		super();
-		this.codigo = codigo;
 		this.obra = obra;
 		this.titulo = titulo;
 		this.descricao = descricao;
@@ -32,14 +31,9 @@ public class Documento extends FirestoreEntity {
 		
 		Date date = new Date();
 		this.dataCriacao = date.toString();		
-		this.observacoes = new ArrayList<Observacao>();
 	}
 	
-	public int getCodigo() {
-		return codigo;
-	}
-
-	public int getObra() {
+	public String getObra() {
 		return obra;
 	}
 
@@ -71,25 +65,12 @@ public class Documento extends FirestoreEntity {
 		this.descricao = descricao;
 	}
 
-	public int getReferencia() {
+	public String getReferencia() {
 		return referencia;
 	}
 
-	public void setReferencia(int referencia) {
+	public void setReferencia(String referencia) {
 		this.referencia = referencia;
 	}
 
-	public List<Observacao> getObservacoes() {
-		return observacoes;
-	}
-
-	public void setObservacoes(List<Observacao> observacoes) {
-		this.observacoes = observacoes;
-	}
-
-	@Override
-	public String key() {
-		return Integer.toString(codigo);
-	}
-	
 }

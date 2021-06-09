@@ -3,11 +3,12 @@ package br.edu.insper.desagil.backend.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.edu.insper.desagil.backend.core.firestore.FirestoreAutokeyEntity;
 import br.edu.insper.desagil.backend.core.firestore.FirestoreEntity;
 
-public class Obra extends FirestoreEntity {
+public class Obra extends FirestoreAutokeyEntity  {
 
-	private int codigo; // id da obra
+
 	private String titulo;
 	private String endereco;
 	private String responsavel;
@@ -21,9 +22,9 @@ public class Obra extends FirestoreEntity {
 		this.alertas = new ArrayList<>();
 	}
 	
-	public Obra(int codigo, String titulo) {
+	public Obra(String titulo) {
 		super();
-		this.codigo = codigo;
+
 		this.titulo = titulo;
 		
 		this.logs = new ArrayList<>();
@@ -67,16 +68,8 @@ public class Obra extends FirestoreEntity {
 		this.alertas = alertas;
 	}
 
-	public int getCodigo() {
-		return codigo;
-	}
-
 	public String getEndereco() {
 		return endereco;
 	}
 
-	@Override
-	public String key() {
-		return Integer.toString(codigo);
-	}
 }

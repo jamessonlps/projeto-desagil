@@ -3,15 +3,15 @@ package br.edu.insper.desagil.backend.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.edu.insper.desagil.backend.core.firestore.FirestoreAutokeyEntity;
 import br.edu.insper.desagil.backend.core.firestore.FirestoreEntity;
 
-public class Pavimento extends FirestoreEntity {
-	private int codigo; 					// código do Pavimento 
-	private int obra; 						// codigo da Obra a que se refere
+public class Pavimento extends FirestoreAutokeyEntity {
+	private String obra;					// Key da Obra a que se refere
 	private String titulo; 					// exibido pelo FrontEnd
 	private String responsavel;				// exibido pelo Front
-	private List<Integer> documentos; 		// Lista com os id's dos Documentos
-	private List<Integer> setores; 			// Lista com os id's dos Setores
+	private List<String> documentos; 		// Lista com os id's dos Documentos
+	private List<String> setores; 			// Lista com os id's dos Setores
 	private List<String> observacoes;		// Lista com as keys das Observações
 	
 	public Pavimento() {
@@ -20,22 +20,16 @@ public class Pavimento extends FirestoreEntity {
 		this.observacoes = new ArrayList<>();
 	}
 	
-	public Pavimento(int codigo, int obra, String titulo, String responsavel) {
+	public Pavimento(int codigo, String obra, String titulo, String responsavel) {
 		super();
-		this.codigo = codigo;
 		this.obra = obra;
 		this.titulo = titulo;
 		this.responsavel = responsavel;
 		this.documentos = new ArrayList<>();
 		this.observacoes = new ArrayList<>();
-		
-	}
-
-	public int getCodigo() {
-		return codigo;
 	}
 	
-	public int getObra() {
+	public String getObra() {
 		return obra;
 	}
 	
@@ -48,11 +42,11 @@ public class Pavimento extends FirestoreEntity {
 		this.titulo = titulo;
 	}
 
-	public List<Integer> getSetores() {
+	public List<String> getSetores() {
 		return setores;
 	}
 
-	public void setSetores(List<Integer> setores) {
+	public void setSetores(List<String> setores) {
 		this.setores = setores;
 	}
 
@@ -64,7 +58,7 @@ public class Pavimento extends FirestoreEntity {
 		this.responsavel = responsavel;
 	}
 
-	public List<Integer> getDocumentos(){
+	public List<String> getDocumentos(){
 		return documentos;
 	}
 	
@@ -78,11 +72,6 @@ public class Pavimento extends FirestoreEntity {
 
 	public void addObservacao(String key) {
 		this.observacoes.add(key);
-	}
-	
-	@Override // -- método requerido pelo FirestoreEntity
-	public String key() {
-		return Integer.toString(codigo);
 	}
 	
 	

@@ -24,7 +24,7 @@ public class DocumentoEndpoint extends Endpoint<Documento> {
 		try {
 			documento = dao.retrieve(args.get("codigo"));
 		} catch (DBException exception) {
-			return null;
+            throw new DatabaseRequestException(exception);
 		}
 		return documento;
 	}	
@@ -39,7 +39,7 @@ public class DocumentoEndpoint extends Endpoint<Documento> {
 		try {
 			documentos = dao.retrieve(codigos);
 		} catch (DBException exception) {
-			throw new DatabaseRequestException(exception);
+            throw new DatabaseRequestException(exception);
 		}
 		
 		return documentos;
@@ -53,12 +53,12 @@ public class DocumentoEndpoint extends Endpoint<Documento> {
 		try {
 			date = dao.create(documento);
 		} catch (DBException exception) {
-			return null;
+            throw new DatabaseRequestException(exception);
 		}
 		
 		Map<String, String> body = new HashMap<>();
 		body.put("date", date.toString());
-		body.put("key", Integer.toString(documento.getCodigo()));
+		body.put("key", documento.getKey());
 		
 		return body;
 
@@ -71,7 +71,7 @@ public class DocumentoEndpoint extends Endpoint<Documento> {
 	    try {
 	        date = dao.update(documento);
 	    } catch (DBException exception) {
-	        return null;
+            throw new DatabaseRequestException(exception);
 	    }
 	    Map<String, String> body = new HashMap<>();
 	    body.put("date", date.toString());
@@ -85,7 +85,7 @@ public class DocumentoEndpoint extends Endpoint<Documento> {
 	    try {
 	        date = dao.delete(args.get("codigo"));
 	    } catch (DBException exception) {
-	        return null;
+            throw new DatabaseRequestException(exception);
 	    }
 	    Map<String, String> body = new HashMap<>();
 	    body.put("date", date.toString());

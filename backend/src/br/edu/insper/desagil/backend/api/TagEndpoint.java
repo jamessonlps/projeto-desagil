@@ -7,6 +7,7 @@ import java.util.Map;
 import br.edu.insper.desagil.backend.core.Endpoint;
 import br.edu.insper.desagil.backend.core.exception.APIException;
 import br.edu.insper.desagil.backend.core.exception.DBException;
+import br.edu.insper.desagil.backend.core.exception.DatabaseRequestException;
 import br.edu.insper.desagil.backend.db.TagDAO;
 import br.edu.insper.desagil.backend.model.Tag;
 
@@ -22,7 +23,7 @@ public class TagEndpoint extends Endpoint<Tag> {
 		try {
 			tag = dao.retrieve(args.get("id"));
 		} catch (DBException exception) {
-			return null;
+            throw new DatabaseRequestException(exception);
 		}
 		return tag;
 	}	
@@ -34,11 +35,12 @@ public class TagEndpoint extends Endpoint<Tag> {
 		try {
 			date = dao.create(tag);
 		} catch (DBException exception) {
-			return null;
+            throw new DatabaseRequestException(exception);
 		}
 		
 		Map<String, String> body = new HashMap<>();
 		body.put("date", date.toString());
+		body.put("key", tag.getKey());
 		
 		return body;
 
@@ -51,7 +53,7 @@ public class TagEndpoint extends Endpoint<Tag> {
 	    try {
 	        date = dao.update(tag);
 	    } catch (DBException exception) {
-	        return null;
+            throw new DatabaseRequestException(exception);
 	    }
 	    Map<String, String> body = new HashMap<>();
 	    body.put("date", date.toString());
@@ -65,7 +67,7 @@ public class TagEndpoint extends Endpoint<Tag> {
 	    try {
 	        date = dao.delete(args.get("id"));
 	    } catch (DBException exception) {
-	        return null;
+            throw new DatabaseRequestException(exception);
 	    }
 	    Map<String, String> body = new HashMap<>();
 	    body.put("date", date.toString());

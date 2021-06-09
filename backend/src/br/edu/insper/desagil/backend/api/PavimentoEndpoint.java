@@ -2,12 +2,16 @@ package br.edu.insper.desagil.backend.api;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import br.edu.insper.desagil.backend.core.Endpoint;
 import br.edu.insper.desagil.backend.core.exception.APIException;
 import br.edu.insper.desagil.backend.core.exception.DBException;
+import br.edu.insper.desagil.backend.core.exception.DatabaseRequestException;
+import br.edu.insper.desagil.backend.db.DocumentoDAO;
 import br.edu.insper.desagil.backend.db.PavimentoDAO;
+import br.edu.insper.desagil.backend.model.Documento;
 import br.edu.insper.desagil.backend.model.Pavimento;
 
 public class PavimentoEndpoint extends Endpoint<Pavimento> {
@@ -23,7 +27,7 @@ public class PavimentoEndpoint extends Endpoint<Pavimento> {
 		try {
 			pavimento = dao.retrieve(args.get("codigo"));
 		} catch (DBException exception) {
-			return null;
+            throw new DatabaseRequestException(exception);
 		}
 		return pavimento;
 	}	
@@ -35,11 +39,12 @@ public class PavimentoEndpoint extends Endpoint<Pavimento> {
 		try {
 			date = dao.create(pavimento);
 		} catch (DBException exception) {
-			return null;
+            throw new DatabaseRequestException(exception);
 		}
 		
 		Map<String, String> body = new HashMap<>();
 		body.put("date", date.toString());
+		body.put("key",  pavimento.getKey());
 		
 		return body;
 
@@ -52,7 +57,7 @@ public class PavimentoEndpoint extends Endpoint<Pavimento> {
 	    try {
 	        date = dao.update(pavimento);
 	    } catch (DBException exception) {
-	        return null;
+            throw new DatabaseRequestException(exception);
 	    }
 	    Map<String, String> body = new HashMap<>();
 	    body.put("date", date.toString());
@@ -66,7 +71,7 @@ public class PavimentoEndpoint extends Endpoint<Pavimento> {
 	    try {
 	        date = dao.delete(args.get("codigo"));
 	    } catch (DBException exception) {
-	        return null;
+            throw new DatabaseRequestException(exception);
 	    }
 	    Map<String, String> body = new HashMap<>();
 	    body.put("date", date.toString());

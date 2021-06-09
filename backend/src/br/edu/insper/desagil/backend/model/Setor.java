@@ -3,15 +3,14 @@ package br.edu.insper.desagil.backend.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.edu.insper.desagil.backend.core.firestore.FirestoreAutokeyEntity;
 import br.edu.insper.desagil.backend.core.firestore.FirestoreEntity;
 
-public class Setor extends FirestoreEntity {
-	private int codigo; 				// código do Pavimento --> Pode ser da forma AB0123 --> para outras referencias dentro dele, podemos complementar AB0123___
-	private int obra;
+public class Setor extends FirestoreAutokeyEntity {
+	private String obra;				// key da Obra a que se refere
 	private String titulo; 				// exibido pelo FrontEnd
-	private String responsavel;
-	private int idPavimento;			// id do pavimento a que se refere
-	private List<Integer> documentos; 	// Lista com os id's dos documentos
+	private String responsavel;			// exibido pelo FrontEnd
+	private List<String> documentos; 	// Lista com os id's dos documentos
 	private List<String> observacoes;	// Lista com as key's de observacoes
 	
 	public Setor() {
@@ -20,21 +19,16 @@ public class Setor extends FirestoreEntity {
 		this.observacoes = new ArrayList<>();
 	}
 	
-	public Setor(int codigo, int obra, String titulo, int idPavimento) {
+	public Setor(int codigo, String obra, String titulo, String pavimento) {
 		super();
-		this.codigo = codigo;
 		this.obra = obra;
 		this.titulo = titulo;
-		this.idPavimento = idPavimento;
 		this.documentos = new ArrayList<>();
 		this.observacoes = new ArrayList<>();
 	}
 
-	public int getCodigo() {
-		return codigo;
-	}
 	
-	public int getObra() {
+	public String getObra() {
 		return obra;
 	}
 	
@@ -46,14 +40,6 @@ public class Setor extends FirestoreEntity {
 		this.titulo = titulo;
 	}
 
-	public int getIdPavimento() {
-		return idPavimento;
-	}
-
-	public void setIdPavimento(int idPavimento) {
-		this.idPavimento = idPavimento;
-	}
-
 	public String getResponsavel() {
 		return responsavel;
 	}
@@ -62,11 +48,11 @@ public class Setor extends FirestoreEntity {
 		this.responsavel = responsavel;
 	}
 
-	public List<Integer> getDocumentos(){
+	public List<String> getDocumentos(){
 		return documentos;
 	}
 	
-	public void setDocumentos(List<Integer> documentos) {
+	public void setDocumentos(List<String> documentos) {
 		this.documentos = documentos;
 	}
 
@@ -81,11 +67,5 @@ public class Setor extends FirestoreEntity {
 	public void addObservacao(String key) {
 		this.observacoes.add(key);
 	}
-
-	@Override // -- método requerido pelo FirestoreEntity
-	public String key() {
-		return Integer.toString(codigo);
-	}
-	
 	
 }

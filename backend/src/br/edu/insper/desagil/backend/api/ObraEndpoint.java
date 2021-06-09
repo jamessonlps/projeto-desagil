@@ -7,6 +7,7 @@ import java.util.Map;
 import br.edu.insper.desagil.backend.core.Endpoint;
 import br.edu.insper.desagil.backend.core.exception.APIException;
 import br.edu.insper.desagil.backend.core.exception.DBException;
+import br.edu.insper.desagil.backend.core.exception.DatabaseRequestException;
 import br.edu.insper.desagil.backend.db.ObraDAO;
 import br.edu.insper.desagil.backend.model.Obra;
 
@@ -22,7 +23,7 @@ public class ObraEndpoint extends Endpoint<Obra> {
 		try {
 			obra = dao.retrieve(args.get("codigo"));
 		} catch (DBException exception) {
-			return null;
+            throw new DatabaseRequestException(exception);
 		}
 		return obra;
 	}	
@@ -33,12 +34,13 @@ public class ObraEndpoint extends Endpoint<Obra> {
 		Date date;
 		try {
 			date = dao.create(obra);
-		} catch (DBException exception) {
-			return null;
+		}  catch (DBException exception) {
+            throw new DatabaseRequestException(exception);
 		}
 		
 		Map<String, String> body = new HashMap<>();
 		body.put("date", date.toString());
+		body.put("key", obra.getKey());
 		
 		return body;
 
@@ -51,7 +53,7 @@ public class ObraEndpoint extends Endpoint<Obra> {
 	    try {
 	        date = dao.update(obra);
 	    } catch (DBException exception) {
-	        return null;
+            throw new DatabaseRequestException(exception);
 	    }
 	    Map<String, String> body = new HashMap<>();
 	    body.put("date", date.toString());
@@ -64,8 +66,8 @@ public class ObraEndpoint extends Endpoint<Obra> {
 	    Date date;
 	    try {
 	        date = dao.delete(args.get("codigo"));
-	    } catch (DBException exception) {
-	        return null;
+	    }  catch (DBException exception) {
+            throw new DatabaseRequestException(exception);
 	    }
 	    Map<String, String> body = new HashMap<>();
 	    body.put("date", date.toString());
