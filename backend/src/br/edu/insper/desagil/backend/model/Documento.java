@@ -1,18 +1,13 @@
 package br.edu.insper.desagil.backend.model;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-
 import br.edu.insper.desagil.backend.core.firestore.FirestoreAutokeyEntity;
-import br.edu.insper.desagil.backend.core.firestore.FirestoreEntity;
 
 public class Documento extends FirestoreAutokeyEntity {
 
 	private String obra;			// Guarda o id da obra a qual se refere
 	private String titulo;			// Será exibido pelo front-end
 	private String descricao; 		// Breve descrição sobre o que se trata o documento 
-	private String referencia; 		// id do Pavimento / Apartamento a que o documento se refere.
 	private String url;				// Link para acessarmos o documento
 	private String dataCriacao;		// frontEnd -- fixo
 	
@@ -65,12 +60,5 @@ public class Documento extends FirestoreAutokeyEntity {
 		this.descricao = descricao;
 	}
 
-	public String getReferencia() {
-		return referencia;
-	}
-
-	public void setReferencia(String referencia) {
-		this.referencia = referencia;
-	}
 
 }

@@ -18,6 +18,7 @@ public class Pavimento extends FirestoreAutokeyEntity {
 		super();
 		this.documentos = new ArrayList<>();
 		this.observacoes = new ArrayList<>();
+		this.setores = new ArrayList<>();
 	}
 	
 	public Pavimento(int codigo, String obra, String titulo, String responsavel) {
@@ -27,8 +28,17 @@ public class Pavimento extends FirestoreAutokeyEntity {
 		this.responsavel = responsavel;
 		this.documentos = new ArrayList<>();
 		this.observacoes = new ArrayList<>();
+		this.setores = new ArrayList<>();
 	}
 	
+	public Pavimento(String obra, String titulo, String responsavel, List<String> documentos) {
+		super();
+		this.obra = obra;
+		this.titulo = titulo;
+		this.responsavel = responsavel;
+		this.documentos = documentos;
+	}
+
 	public String getObra() {
 		return obra;
 	}
@@ -62,6 +72,14 @@ public class Pavimento extends FirestoreAutokeyEntity {
 		return documentos;
 	}
 	
+	public void addDocumento(String key) {
+		this.documentos.add(key);
+	}
+	
+	public void setDocumentos(List<String> documentos) {
+		this.documentos = documentos;
+	}
+
 	public List<String> getObservacoes() {
 		return observacoes;
 	}

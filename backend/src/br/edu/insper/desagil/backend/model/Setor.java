@@ -26,8 +26,15 @@ public class Setor extends FirestoreAutokeyEntity {
 		this.documentos = new ArrayList<>();
 		this.observacoes = new ArrayList<>();
 	}
-
 	
+	public Setor(String obra, String titulo, String responsavel, List<String> documentos) {
+		super();
+		this.obra = obra;
+		this.titulo = titulo;
+		this.responsavel = responsavel;
+		this.documentos = documentos;
+	}
+
 	public String getObra() {
 		return obra;
 	}
@@ -50,6 +57,10 @@ public class Setor extends FirestoreAutokeyEntity {
 
 	public List<String> getDocumentos(){
 		return documentos;
+	}
+	
+	public void addDocumento(String key) {
+		this.documentos.add(key);
 	}
 	
 	public void setDocumentos(List<String> documentos) {
