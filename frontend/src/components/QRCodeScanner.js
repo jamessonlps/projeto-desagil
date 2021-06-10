@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button, Alert } from 'react-native';
+import { Text, View, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { useNavigation } from '@react-navigation/native';
 import client from '../../client';
@@ -8,6 +8,7 @@ export default function QRCodeScanner() {
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
 
+    const [loadingSpinner, setLoadingSpinner] = useState(false);
     const [loading, setLoading] = useState(true);
     const [response, setResponse] = useState(null);
 
@@ -30,13 +31,15 @@ export default function QRCodeScanner() {
         if (readingType == 'documento') {
             path = "PDFView"; 
         }
-        else {
+        else if (readingType == 'pavimento') {
             path = "GeneralView";
+        } else if (readingType == 'setor') {
+            path = "SectorView";
         }
-        client.get(`http://192.168.1.106:8080/${readingType}?codigo=${target}`, (body) => {
+        client.get(`http://192.168.1.106:8080/${readingType}?key=${target}`, (body) => {
             Alert.alert(
                 `${body.titulo}`,
-                `${body.responsavel}`,
+                `Responsável: ${body.responsavel}`,
                 [
                     {text: "Cancelar", style: "cancel"}, 
                     {text: "Ver mais", onPress: () => {
@@ -55,14 +58,18 @@ export default function QRCodeScanner() {
     const handleBarCodeScanned = ({ type, data }) => {
         setScanned(true);
         client.get(
-            `http://192.168.1.106:8080/tag?id=${data}`,
+            `http://192.168.1.106:8080/tag?key=${data}`,
             (body) => {
                 setReadingType(body.tipo);
                 setTarget(body.alvo);
             },
             (message) => setResponse(message),
-            () => setLoading(false),
-            () => setLoading(false)
+            () => {
+                setLoading(false);
+            },
+            () => {
+                setLoading(false);
+            }
         );
     };
 
@@ -80,10 +87,16 @@ export default function QRCodeScanner() {
                     onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
                     style={StyleSheet.absoluteFillObject}
                 />
-                {scanned && <Button title={'Escanear novamente'} onPress={() => {
-                    setScanned(false)
-                    setTarget(null);
-                }} />}
+                {scanned && 
+                    <TouchableOpacity 
+                    style={styles.button}
+                    onPress={() => {
+                        setScanned(false)
+                        setTarget(null);
+                    }}>
+                    <Text style={{color: '#fff', fontSize: 22}}>Escanear novamente</Text>
+                    </TouchableOpacity>
+                }
             </View>
         </>
     );
@@ -93,6 +106,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
+        justifyContent: 'flex-end',
+    },
+    button: {
+        alignSelf: 'center',
         justifyContent: 'center',
+        backgroundColor: "#2385A2",
+        padding: 15,
+        borderRadius: 25,
+        marginBottom: 30
     },
 });

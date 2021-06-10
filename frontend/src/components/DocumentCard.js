@@ -9,11 +9,11 @@ export default function DocumentCard(props) {
             <View style={styles.cardTextContainer}>
                 <Text style={styles.cardTitle}>{props.titulo}</Text>
                 <Text numberOfLines={2} style={styles.cardDescription}>{props.descricao}</Text>
-                <Text style={styles.cardDate}>08/06/2021 - 12:34 {props.dataCriacao}</Text>
+                <Text style={styles.cardDate}>{props.dataCriacao}</Text>
             </View>
 
             <View style={styles.cardIconContainer}>
-                <Next />
+                <Next width={24} height={24} color='#2385A2' />
             </View>
         </View>
     );

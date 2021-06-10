@@ -1,32 +1,42 @@
 import React from 'react';
-import { View, Button, StatusBar, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import AppLoading from 'expo-app-loading';
 
 import client from '../../client';
 import LogCard from '../components/LogCard';
 
+import { useFonts } from '@expo-google-fonts/open-sans';
+import QRCodeIcon from '../icons/qr-code';
+
 export default function InitialPage() {
     const navigation = useNavigation();
 
-    return (
-        <View style={styles.container}>
-            <Text style={styles.logTitle}>Registros</Text>
-            <View style={styles.lineStyle} />
-            <LogCard />
-            <LogCard />
-            <LogCard />
-            <LogCard />
-            <LogCard />
-            <View style={styles.containerText}>
-                <TouchableOpacity
-                    style={styles.qrbutton} 
-                    onPress={() => navigation.navigate('QR Code Scanner')}
-                >
-                    <Image resizeMode='center' source={require('../icons/qr-code-whitebg(2).png')} width={64} height={64} />
-                </TouchableOpacity>
+    let [fontsLoaded] = useFonts({ 'Open Sans': require('../assets/fonts/OpenSans-Bold.ttf') });
+
+    if (!fontsLoaded) {
+        return (<AppLoading />)
+    } else {
+        return (
+            <View style={styles.container}>
+                <Text style={styles.logTitle}>Registros</Text>
+                <View style={styles.lineStyle} />
+                <LogCard />
+                <LogCard />
+                <LogCard />
+                <LogCard />
+                <LogCard />
+                <View style={styles.containerText}>
+                    <TouchableOpacity
+                        style={styles.qrbutton} 
+                        onPress={() => navigation.navigate('QR Code Scanner')}
+                    >
+                        <QRCodeIcon width={96} height={96} />
+                    </TouchableOpacity>
+                </View>
             </View>
-        </View>
-    );
+        );
+    }
 }
 
 const styles = StyleSheet.create({
@@ -38,16 +48,19 @@ const styles = StyleSheet.create({
     },
     containerText: {
         flex: 1,
-        alignContent: 'center',
-        justifyContent: 'center'
+        // alignContent: 'center',
+        // justifyContent: 'center',
+        position: 'absolute',
+        bottom: '5%',
+        alignSelf: 'center'
     },
     qrbutton: {
         alignItems: 'center',
         justifyContent: 'center',
         alignSelf: 'center',
         // borderColor: 'red',
-        width: 128,
-        height: 128,
+        width: 70,
+        height: 70,
         // borderWidth: 3,
         borderRadius: 100,
         backgroundColor: '#ffffff',
@@ -62,7 +75,8 @@ const styles = StyleSheet.create({
     },
     logTitle: {
         fontSize: 20,
-        fontWeight: 'bold'
+        // fontWeight: 'bold',
+        fontFamily: 'Open Sans'
     },
     lineStyle: {
         borderWidth: 0.5,
