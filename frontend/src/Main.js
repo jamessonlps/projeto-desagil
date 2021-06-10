@@ -6,15 +6,24 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { LinearGradient } from 'expo-linear-gradient';
+// import { setCustomText } from 'react-native-global-props';
 
 /** PÁGINAS */
 import InitialPage from './view/InitialPage';
 import QRScan from './view/QRScan';
 import PDFView from './components/PDFView';
 import GeneralView from './view/GeneralView';
+import SectorView from './view/SectorView';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+// const customTextProps = {
+//     style: {
+//         fontFamily: 'OpenSans-Regular'
+//     }
+// }
+
+// setCustomText(customTextProps);
 
 export default function Main(props) {
     return (
@@ -55,6 +64,15 @@ export default function Main(props) {
                 <Stack.Screen 
                     name="GeneralView"
                     component={GeneralView}
+                    options={{
+                        title: null,
+                        headerBackground: backgroundConnect,
+                        headerTintColor: "#fff"
+                    }}
+                />
+                <Stack.Screen 
+                    name="SectorView"
+                    component={SectorView}
                     options={{
                         title: null,
                         headerBackground: backgroundConnect,

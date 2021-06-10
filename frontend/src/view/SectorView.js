@@ -4,7 +4,6 @@ import { useNavigation } from '@react-navigation/native';
 import client from '../../client';
 import DocumentCard from '../components/DocumentCard';
 import CommentCard from '../components/CommentCard';
-import SectorCard from '../components/SectorCard';
 import AlertCard from '../components/AlertCard';
 import { TextInput } from 'react-native-gesture-handler';
 import BuildingIcon from '../icons/building';
@@ -15,7 +14,6 @@ export default function GeneralView({ route }) {
     const [loading, setLoading] = useState(true);
     const [docsLoading, setDocsLoading] = useState(true);
     const [logLoading, setLogLoading] = useState(true);
-    const [sectorLoading, setSectorLoading] = useState(true); // para objetos do tipo pavimento
 
     const [response, setResponse] = useState(null);
     const [textInput, setTextInput] = useState(null);
@@ -25,7 +23,6 @@ export default function GeneralView({ route }) {
 
     const [data, setData] = useState(null);
     const [log, setLog] = useState(null);
-    const [sectors, setSectors] = useState(null);  // quando o objeto lido é um pavimento
 
     // Exibe uma alerta para marcar se é obs. do tipo alerta ou não
     function verifyAlert() {
@@ -50,7 +47,7 @@ export default function GeneralView({ route }) {
     function submitNewNote(isAlert) {
         if (isAlert !== null) {
             client.post(
-                `http://192.168.1.106:8080/observacao?obra=${route.params?.obra}&${route.params?.tipoObra}=${route.params?.key}`,
+                `http://192.168.1.106:8080/observacao?obra=${route.params?.obra}&setor=${route.params?.key}`,
                 {
                     "alerta": isAlert,
                     "texto": textInput
@@ -86,26 +83,11 @@ export default function GeneralView({ route }) {
         () => setLoading(false), 
         () => setLoading(false)
         );
-    
-        setLoading(true);
-        client.get(`http://192.168.1.106:8080/setor/list?setores=${route.params?.setores}`, (body) => {
-            setSectors(body);
-            setSectorLoading(false);
-        },
-        (message) => setResponse(message), 
-        () => setLoading(false), 
-        () => setLoading(false)
-        );
-    
     }
 
     useEffect(() => {
         getDataToRender();
     }, []);
-
-    // useEffect(() => {
-    //     getDataToRender();
-    // }, [refresh]);
 
     return (
         <ScrollView style={styles.outerContainer}>
@@ -125,31 +107,12 @@ export default function GeneralView({ route }) {
             </LinearGradient>
 
             <View style={styles.contentContainer}>
-                {/* =============== SETORES ================= */}
-                <View style={styles.subTitleContainer}>
-                    <Text style={styles.mainTitle}>Setores</Text>
-                    <View style={styles.lineStyle} />
-                </View>
-                {
-                    sectorLoading ? (<ActivityIndicator size='large' color="#2385A2" />) 
-                    : 
-                    sectors.map((item, index) => (
-                        <TouchableOpacity key={index} onPress={() => navigation.navigate("SectorView", item)}>
-                            <SectorCard 
-                                titulo={item.titulo}
-                                // responsavel={item.responsavel}
-                                />
-                        </TouchableOpacity>
-                    ))
-                }
-
-
+                
                 {/* =============== DOCUMENTOS ================= */}
                 <View style={styles.subTitleContainer}>
                     <Text style={styles.mainTitle}>Documentos</Text>
                     <View style={styles.lineStyle} />
                 </View>
-                
                 <View>
                     {
                         docsLoading && data !== null ? (<ActivityIndicator size='small' color='#2385A2'  />) 
@@ -160,11 +123,13 @@ export default function GeneralView({ route }) {
                                     titulo={item.titulo}
                                     descricao={item.descricao}
                                     dataCriacao={item.dataCriacao}
-                                    />
+                                    ultimaModificacao={item.ultimaModificacao}
+                                />
                             </TouchableOpacity>
                         ))
                         : <Text style={{alignSelf: 'center', color: 'gray'}}>Não há conteúdo a ser exibido</Text>
                     }
+
                 </View>
 
                 {/* =============== ALERTAS ================= */}
@@ -172,19 +137,19 @@ export default function GeneralView({ route }) {
                     <Text style={styles.mainTitle}>Alertas</Text>
                     <View style={styles.lineStyle} />
                 </View>
-                {
-                    logLoading && log !== null ? (<ActivityIndicator size='large' color="#2385A2" />) 
-                    : !logLoading && log.length > 0 ?
-                    log.map((item, index) => item.alerta ? (
-                        <View key={index}>
-                            <AlertCard 
-                                texto={item.texto}
-                                dataCriacao={item.dataCriacao}
+                    {
+                        logLoading && log !== null ? (<ActivityIndicator size='large' color="#2385A2" />) 
+                        : !logLoading && log.length > 0 ?
+                        log.map((item, index) => item.alerta ? (
+                            <View key={index}>
+                                <AlertCard 
+                                    texto={item.texto}
+                                    dataCriacao={item.dataCriacao}
                                 />
-                        </View>
-                    ) : null)
-                    : <Text style={{alignSelf: 'center', color: 'gray'}}>Não há conteúdo a ser exibido</Text>
-                }
+                            </View>
+                        ) : null)
+                        : <Text style={{alignSelf: 'center', color: 'gray'}}>Não há conteúdo a ser exibido</Text>
+                    }
 
                 {/* =============== OBSERVAÇÕES ================= */}
                 <View style={styles.subTitleContainer}>
@@ -199,7 +164,7 @@ export default function GeneralView({ route }) {
                                 <CommentCard 
                                     texto={item.texto}
                                     dataCriacao={item.dataCriacao}
-                                    />
+                                />
                             </View>
                         ) : null)
                         : <Text style={{alignSelf: 'center', color: 'gray'}}>Não há conteúdo a ser exibido</Text>
@@ -208,7 +173,8 @@ export default function GeneralView({ route }) {
             </View>
 
 
-            {/* =============== INPUT NOVA OBSERVAÇÃO / ALERTA ================= */}
+
+
             <View style={styles.inputContainer}>
                 <Text style={styles.inputTitle} > Adicionar observação ou alerta</Text>
                 <TextInput 
@@ -227,7 +193,6 @@ export default function GeneralView({ route }) {
                 </TouchableOpacity>
 
             </View>
-                {/* <Text>{msg}</Text> */}
         </ScrollView>
     );
 }
@@ -266,8 +231,7 @@ const styles = StyleSheet.create({
     subTitleContainer: {
         display: 'flex',
         flexDirection: 'column',
-        marginTop: 10,
-        // minHeight: 100
+        marginTop: 10
     },
     inputContainer: {
         display: 'flex',
