@@ -6,7 +6,7 @@ import DocumentCard from '../components/DocumentCard';
 import CommentCard from '../components/CommentCard';
 import AlertCard from '../components/AlertCard';
 import { TextInput } from 'react-native-gesture-handler';
-import BuildingIcon from '../icons/building';
+import BuildingIcon from '../icons/building2';
 
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -47,7 +47,7 @@ export default function GeneralView({ route }) {
     function submitNewNote(isAlert) {
         if (isAlert !== null) {
             client.post(
-                `http://192.168.1.106:8080/observacao?obra=${route.params?.obra}&setor=${route.params?.key}`,
+                `http://192.168.1.111:8080/observacao?obra=${route.params?.obra}&setor=${route.params?.key}`,
                 {
                     "alerta": isAlert,
                     "texto": textInput
@@ -65,7 +65,7 @@ export default function GeneralView({ route }) {
 
     function getDataToRender() {
         setLoading(true);
-        client.get(`http://192.168.1.106:8080/documento/list?documentos=${route.params?.documentos}`, (body) => {
+        client.get(`http://192.168.1.111:8080/documento/list?documentos=${route.params?.documentos}`, (body) => {
             setData(body);
             setDocsLoading(false);
         },
@@ -75,7 +75,7 @@ export default function GeneralView({ route }) {
         );
     
         setLoading(true);
-        client.get(`http://192.168.1.106:8080/observacao/list?observacoes=${route.params?.observacoes}`, (body) => {
+        client.get(`http://192.168.1.111:8080/observacao/list?observacoes=${route.params?.observacoes}`, (body) => {
             setLog(body);
             setLogLoading(false);
         },
@@ -108,6 +108,26 @@ export default function GeneralView({ route }) {
 
             <View style={styles.contentContainer}>
                 
+
+                {/* =============== ALERTAS ================= */}
+                <View style={styles.subTitleContainer}>
+                    <Text style={styles.mainTitle}>Alertas</Text>
+                    <View style={styles.lineStyle} />
+                </View>
+                {
+                    logLoading && log !== null ? (<ActivityIndicator size='large' color="#2385A2" />) 
+                    : !logLoading && log.length > 0 ?
+                    log.map((item, index) => item.alerta ? (
+                        <View key={index}>
+                            <AlertCard 
+                                texto={item.texto}
+                                dataCriacao={item.dataCriacao}
+                            />
+                        </View>
+                    ) : null)
+                    : <Text style={{alignSelf: 'center', color: 'gray'}}>Não há conteúdo a ser exibido</Text>
+                }
+
                 {/* =============== DOCUMENTOS ================= */}
                 <View style={styles.subTitleContainer}>
                     <Text style={styles.mainTitle}>Documentos</Text>
@@ -131,25 +151,6 @@ export default function GeneralView({ route }) {
                     }
 
                 </View>
-
-                {/* =============== ALERTAS ================= */}
-                <View style={styles.subTitleContainer}>
-                    <Text style={styles.mainTitle}>Alertas</Text>
-                    <View style={styles.lineStyle} />
-                </View>
-                    {
-                        logLoading && log !== null ? (<ActivityIndicator size='large' color="#2385A2" />) 
-                        : !logLoading && log.length > 0 ?
-                        log.map((item, index) => item.alerta ? (
-                            <View key={index}>
-                                <AlertCard 
-                                    texto={item.texto}
-                                    dataCriacao={item.dataCriacao}
-                                />
-                            </View>
-                        ) : null)
-                        : <Text style={{alignSelf: 'center', color: 'gray'}}>Não há conteúdo a ser exibido</Text>
-                    }
 
                 {/* =============== OBSERVAÇÕES ================= */}
                 <View style={styles.subTitleContainer}>
@@ -189,7 +190,7 @@ export default function GeneralView({ route }) {
                 <TouchableOpacity 
                     style={styles.inputButton}
                     onPress={verifyAlert}>
-                    <Text style={{color: 'white', fontSize: 18}}>Enviar observação</Text>
+                    <Text style={{color: 'white', fontSize: 18}}>Enviar</Text>
                 </TouchableOpacity>
 
             </View>
@@ -254,7 +255,7 @@ const styles = StyleSheet.create({
     },
     lineStyle: {
         borderWidth: 0.5,
-        borderColor:'gray',
+        borderColor:'#d3d3d3',
         marginBottom: 10,
         marginTop: 5
     },
@@ -262,7 +263,8 @@ const styles = StyleSheet.create({
         backgroundColor: "#2385A2",
         alignItems: 'center',
         alignSelf: 'center',
-        padding: 8,
+        paddingHorizontal: 25,
+        paddingVertical: 6,
         marginTop: 10,
         borderRadius: 5,
         shadowColor: "#000",

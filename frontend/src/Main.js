@@ -9,11 +9,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 // import { setCustomText } from 'react-native-global-props';
 
 /** PÁGINAS */
-import InitialPage from './view/InitialPage';
-import QRScan from './view/QRScan';
+import InitialPage from './views/InitialPage';
+import QRScan from './views/QRScan';
 import PDFView from './components/PDFView';
-import GeneralView from './view/GeneralView';
-import SectorView from './view/SectorView';
+import GeneralView from './views/GeneralView';
+import SectorView from './views/SectorView';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -89,7 +89,6 @@ const backgroundConnect = () =>
         colors={[ "#2D2A9B", "#2385A2"]}
         start={{x: 0, y: 0}}
         end={{x: 1, y: 0}}
-        style={{flex: 1}}
-        >
-            <Image style={{width: 230, height: 60, alignSelf: 'center', marginTop: StatusBar.currentHeight}} source={require("./connection/connectdata_marca_4_1.png")} />
+        style={{flex: 1}}>
+            <Image style={{width: 230, height: 60, alignSelf: 'center', marginTop: StatusBar.currentHeight}} source={require("./connection/connectdata_marca_4_1.png")}/>
     </LinearGradient>

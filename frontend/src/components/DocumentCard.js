@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { formatData } from '../utils/FormatDate';
 
 import Next from '../icons/next';
 
@@ -9,11 +10,11 @@ export default function DocumentCard(props) {
             <View style={styles.cardTextContainer}>
                 <Text style={styles.cardTitle}>{props.titulo}</Text>
                 <Text numberOfLines={2} style={styles.cardDescription}>{props.descricao}</Text>
-                <Text style={styles.cardDate}>{props.dataCriacao}</Text>
+                <Text style={styles.cardDate}>{formatData(props.dataCriacao)}</Text>
             </View>
 
             <View style={styles.cardIconContainer}>
-                <Next width={24} height={24} color='#2385A2' />
+                <Next width={18} height={18} color='#2385A2' />
             </View>
         </View>
     );
@@ -51,7 +52,7 @@ const styles = StyleSheet.create({
         color: "#2D2A9B"
     },
     cardDescription: {
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: 'normal',
         color: 'gray'
     },

@@ -4,6 +4,9 @@ export function formatData(date) {
     let year = date.split(" ")[5];
     let time = date.split(" ")[3];
 
+    let hour = time.split(":")[0];
+    let minutes = time.split(":")[1];
+
     function getMonth(month) {
         if (month == "Jan") {
             return "01";
@@ -43,5 +46,5 @@ export function formatData(date) {
         }
     }
 
-    return `${day}/${month}/${year} - ${time}`
+    return `${day}/${month}/${year} - ${hour}:${minutes}`
 }

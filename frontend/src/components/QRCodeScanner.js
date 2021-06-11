@@ -36,7 +36,7 @@ export default function QRCodeScanner() {
         } else if (readingType == 'setor') {
             path = "SectorView";
         }
-        client.get(`http://192.168.1.106:8080/${readingType}?key=${target}`, (body) => {
+        client.get(`http://192.168.1.111:8080/${readingType}?key=${target}`, (body) => {
             Alert.alert(
                 `${body.titulo}`,
                 `Responsável: ${body.responsavel}`,
@@ -58,7 +58,7 @@ export default function QRCodeScanner() {
     const handleBarCodeScanned = ({ type, data }) => {
         setScanned(true);
         client.get(
-            `http://192.168.1.106:8080/tag?key=${data}`,
+            `http://192.168.1.111:8080/tag?key=${data}`,
             (body) => {
                 setReadingType(body.tipo);
                 setTarget(body.alvo);

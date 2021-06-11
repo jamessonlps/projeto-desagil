@@ -9,7 +9,7 @@ export default function LogCard(props) {
                 <LogIcon />
             </View>
             <View style={styles.cardTextContainer}>
-                <Text style={styles.description}>07/06/2021 - 23:24 - Uma observação foi adicionada ao Pavimento 04</Text>
+                <Text style={styles.description}>{props.content || "07/06/2021 - 23:24 - Uma observação foi adicionada ao Pavimento 04"}</Text>
             </View>
         </View>
     );
@@ -29,11 +29,13 @@ const styles = StyleSheet.create({
         marginTop: 5,
         marginBottom: 5,
         padding: 10,
+        paddingLeft: 5,
         display: 'flex',
         flexDirection: 'row',
         borderRadius: 5
     },
     description: {
+        color: '#484444',
         fontSize: 16
     },
     cardTextContainer: {

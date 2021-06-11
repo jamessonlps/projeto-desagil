@@ -15,7 +15,7 @@ export default function AlertIcon(props) {
         cx={236.966}
         cy={236.966}
         r={236.966}
-        fill="#2385a2"
+        fill="#ECC208"
         data-original="#e79e2d"
       />
       <Path
