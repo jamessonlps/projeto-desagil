@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
         paddingLeft: 15
     },
     cardDescription: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 'normal',
         color: '#000'
     },

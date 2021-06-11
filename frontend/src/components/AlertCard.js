@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import { formatData } from '../utils/FormatDate';
 
 import Warning from '../icons/warning';
-import WarningGreen from '../icons/warning-green';
 
 export default function AlertCard(props) {
     return (
@@ -54,6 +53,6 @@ const styles = StyleSheet.create({
     },
     cardDate: {
         fontStyle: 'italic',
-        fontSize: 14
+        fontSize: 13
     }
 });
