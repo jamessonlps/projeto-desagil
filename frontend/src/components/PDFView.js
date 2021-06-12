@@ -8,10 +8,6 @@ export default function PDFView({ route }) {
     const [loading, setLoading] = useState(true);
     const navigation = useNavigation();
 
-    // navigation.setOptions({
-    //     title: `${route.params?.titulo}` || "Visualizador de PDF"
-    // });
-
     if (!loading) {
         return (
             <View style={styles.loadingContainer} >

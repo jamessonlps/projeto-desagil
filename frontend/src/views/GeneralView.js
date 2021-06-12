@@ -1,32 +1,31 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import client from '../../client';
-import DocumentCard from '../components/DocumentCard';
 import CommentCard from '../components/CommentCard';
-import SectorCard from '../components/SectorCard';
 import AlertCard from '../components/AlertCard';
 import { TextInput } from 'react-native-gesture-handler';
-import BuildingIcon from '../icons/building2';
-
-import { LinearGradient } from 'expo-linear-gradient';
+import { useGlobal } from '../../store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import NavigateButton from '../components/NavigateButton';
+import SubHeader from '../components/SubHeader';
+import SectionTitle from '../components/SectionTitle';
 
 export default function GeneralView({ route }) {
     const [loading, setLoading] = useState(true);
-    const [docsLoading, setDocsLoading] = useState(true);
     const [logLoading, setLogLoading] = useState(true);
-    const [sectorLoading, setSectorLoading] = useState(true); // para objetos do tipo pavimento
-
+    const [obraTitle, setObraTitle] = useState(null);
+    const [obraAddress, setObraAddress] = useState(null);
     const [response, setResponse] = useState(null);
     const [textInput, setTextInput] = useState(null);
     const [refresh, setRefresh] = useState(null);
     const [msg, setMsg] = useState('');
     const navigation = useNavigation();
+    const localhost = useGlobal('localhost');
+    const address = localhost.address;
 
-    const [data, setData] = useState(null);
     const [log, setLog] = useState(null);
-    const [sectors, setSectors] = useState(null);  // quando o objeto lido é um pavimento
 
     // Exibe uma alerta para marcar se é obs. do tipo alerta ou não
     function verifyAlert() {
@@ -51,7 +50,7 @@ export default function GeneralView({ route }) {
     function submitNewNote(isAlert) {
         if (isAlert !== null) {
             client.post(
-                `http://192.168.1.111:8080/observacao?obra=${route.params?.obra}&${route.params?.tipoObra}=${route.params?.key}`,
+                `${address}/observacao?obra=${route.params?.obra}&${route.params?.tipoObra}=${route.params?.key}`,
                 {
                     "alerta": isAlert,
                     "texto": textInput
@@ -69,17 +68,7 @@ export default function GeneralView({ route }) {
 
     function getDataToRender() {
         setLoading(true);
-        client.get(`http://192.168.1.111:8080/documento/list?documentos=${route.params?.documentos}`, (body) => {
-            setData(body);
-            setDocsLoading(false);
-        },
-        (message) => setResponse(message), 
-        () => setLoading(false), 
-        () => setLoading(false)
-        );
-    
-        setLoading(true);
-        client.get(`http://192.168.1.111:8080/observacao/list?observacoes=${route.params?.observacoes}`, (body) => {
+        client.get(`${address}/observacao/list?observacoes=${route.params?.observacoes}`, (body) => {
             setLog(body);
             setLogLoading(false);
         },
@@ -87,17 +76,16 @@ export default function GeneralView({ route }) {
         () => setLoading(false), 
         () => setLoading(false)
         );
-    
+
         setLoading(true);
-        client.get(`http://192.168.1.111:8080/setor/list?setores=${route.params?.setores}`, (body) => {
-            setSectors(body);
-            setSectorLoading(false);
+        client.get(`${address}/obra?key=${route.params?.obra}`, (body) => {
+            setObraTitle(body.titulo);
+            setObraAddress(body.endereco);
         },
         (message) => setResponse(message), 
         () => setLoading(false), 
         () => setLoading(false)
         );
-    
     }
 
     useEffect(() => {
@@ -116,54 +104,39 @@ export default function GeneralView({ route }) {
             })
     }
 
-    // useEffect(() => {
-    //     getDataToRender();
-    // }, [refresh]);
-
     return (
         <ScrollView style={styles.outerContainer}>
-            <LinearGradient 
-            colors={[ "#2D2A9B", "#2385A2"]}
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 0}}>
-                <View style={styles.headerContainer}>
-                    <View style={{width: '15%'}}>
-                        <BuildingIcon />
-                    </View>
-                    <View style={{width: '85%'}}>
-                        <Text style={styles.headerTitle}>{route.params?.titulo}</Text>
-                        <Text style={{fontSize: 14, color: '#F1F2F2'}}>Responsável: {route.params?.responsavel}</Text>
-                    </View>
-                </View>
-            </LinearGradient>
+            <SubHeader 
+                titulo={route.params?.titulo}
+                responsavel={route.params?.responsavel} 
+            />
+
 
             <View style={styles.contentContainer}>
-                {/* =============== SETORES ================= */}
-                <View style={styles.subTitleContainer}>
-                    <Text style={styles.mainTitle}>Setores</Text>
-                    <View style={styles.lineStyle} />
+                {/* =============== DOCUMENTOS ================= */}
+                <View>
+                    <NavigateButton 
+                        destino={"DocumentsList"}
+                        dados={{documentos: route.params?.documentos, obra: route.params?.obra}}
+                        titulo={"Ver documentos"}
+                    />
                 </View>
-                {
-                    sectorLoading ? (<ActivityIndicator size='large' color="#2385A2" />) 
-                    : 
-                    sectors.map((item, index) => (
-                        <TouchableOpacity key={index} onPress={() => navigation.navigate("SectorView", item)}>
-                            <SectorCard 
-                                titulo={item.titulo}
-                                // responsavel={item.responsavel}
-                                />
-                        </TouchableOpacity>
-                    ))
-                }
 
-                {/* =============== ALERTAS ================= */}
-                <View style={styles.subTitleContainer}>
-                    <Text style={styles.mainTitle}>Alertas</Text>
-                    <View style={styles.lineStyle} />
+
+                {/* ================= SETORES ================== */}
+                <View >
+                    <NavigateButton 
+                        destino={"SectorsList"}
+                        dados={{setores: route.params?.setores, obra: route.params?.obra}}
+                        titulo={"Ver setores"}
+                    />
                 </View>
+
+                {/* ================= ALERTAS ================== */}
+                <SectionTitle titleSection="Alertas" />
                 {
                     logLoading && log !== null ? (<ActivityIndicator size='large' color="#2385A2" />) 
-                    : !logLoading && log.length > 0 ?
+                    : !logLoading && log !== null ?
                     log.map((item, index) => item.alerta ? (
                         <View key={index}>
                             <AlertCard 
@@ -175,37 +148,12 @@ export default function GeneralView({ route }) {
                     : <Text style={{alignSelf: 'center', color: 'gray'}}>Não há conteúdo a ser exibido</Text>
                 }
 
-                {/* =============== DOCUMENTOS ================= */}
-                <View style={styles.subTitleContainer}>
-                    <Text style={styles.mainTitle}>Documentos</Text>
-                    <View style={styles.lineStyle} />
-                </View>
-                
-                <View>
-                    {
-                        docsLoading && data !== null ? (<ActivityIndicator size='small' color='#2385A2'  />) 
-                        : !docsLoading && data.length > 0 ? 
-                        data.map((item, index) => (
-                            <TouchableOpacity key={index} onPress={() => navigation.navigate('PDFView', item)}>
-                                <DocumentCard 
-                                    titulo={item.titulo}
-                                    descricao={item.descricao}
-                                    dataCriacao={item.dataCriacao}
-                                    />
-                            </TouchableOpacity>
-                        ))
-                        : <Text style={{alignSelf: 'center', color: 'gray'}}>Não há conteúdo a ser exibido</Text>
-                    }
-                </View>
 
                 {/* =============== OBSERVAÇÕES ================= */}
-                <View style={styles.subTitleContainer}>
-                    <Text style={styles.mainTitle}>Observações</Text>
-                    <View style={styles.lineStyle} />
-                </View>
+                <SectionTitle titleSection="Observações" />
                     {
                         logLoading && log !== null ? (<ActivityIndicator size='large' color="#2385A2" />)
-                        : !logLoading && log.length > 0 ? 
+                        : !logLoading && log !== null ? 
                         log.map((item, index) => !item.alerta ? (
                             <View key={index}>
                                 <CommentCard 
@@ -236,10 +184,7 @@ export default function GeneralView({ route }) {
                     </TouchableOpacity>
             </View>
 
-
-
             </View>
-                {/* <Text>{msg}</Text> */}
         </ScrollView>
     );
 }
@@ -248,38 +193,11 @@ const styles = StyleSheet.create({
     outerContainer: {
         flex: 1,
         display: 'flex',
-        flexDirection: 'column',
-        // paddingLeft: 15,
-        // paddingRight: 15
+        flexDirection: 'column'
     },
     contentContainer: {
         paddingRight: 15,
         paddingLeft: 15,
-    },
-    headerContainer: {
-        marginTop: 10,
-        marginBottom: 15,
-        paddingLeft: 15,
-        paddingRight: 15,
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
-    headerTitle: {
-        color: '#fff',
-        fontSize: 24,
-        fontWeight: 'bold'
-    },
-    mainTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: "#2D2A9B"
-    },
-    subTitleContainer: {
-        display: 'flex',
-        flexDirection: 'column',
-        marginTop: 10,
-        // minHeight: 100
     },
     inputContainer: {
         display: 'flex',
@@ -300,12 +218,6 @@ const styles = StyleSheet.create({
         elevation: 2,
         borderRadius: 5
     },
-    lineStyle: {
-        borderWidth: 0.5,
-        borderColor: '#d3d3d3',
-        marginBottom: 10,
-        marginTop: 5
-    },
     inputButton: {
         backgroundColor: "#2385A2",
         alignItems: 'center',
@@ -324,8 +236,6 @@ const styles = StyleSheet.create({
         elevation: 2,
     },
     inputArea: {
-        // borderWidth: 1,
-        // height: 20,
         borderRadius: 5,
         padding: 5,
         backgroundColor: "#F1F2F2",

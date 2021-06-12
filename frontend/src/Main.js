@@ -14,6 +14,9 @@ import QRScan from './views/QRScan';
 import PDFView from './components/PDFView';
 import GeneralView from './views/GeneralView';
 import SectorView from './views/SectorView';
+import DocumentsList from './views/DocumentsList';
+import SectorsList from './views/SectorsList';
+
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -79,6 +82,26 @@ export default function Main(props) {
                         headerTintColor: "#fff"
                     }}
                 />
+                <Stack.Screen 
+                    component={DocumentsList}
+                    name="DocumentsList"
+                    options={{
+                        headerTitle: null,
+                        headerTitleAlign: 'center',
+                        headerBackground: backgroundConnect,
+                        headerTintColor: "#fff"
+                    }}>
+                </Stack.Screen>
+                <Stack.Screen 
+                    component={SectorsList}
+                    name="SectorsList"
+                    options={{
+                        headerTitle: null,
+                        headerTitleAlign: 'center',
+                        headerBackground: backgroundConnect,
+                        headerTintColor: "#fff"
+                    }}>
+                </Stack.Screen>
             </Stack.Navigator>
         </NavigationContainer>
     );
