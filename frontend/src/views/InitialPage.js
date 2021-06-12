@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator
 import { useNavigation } from '@react-navigation/native';
 import AppLoading from 'expo-app-loading';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { useGlobal } from '../../store';
 import client from '../../client';
 import LogCard from '../components/LogCard';
 
@@ -17,6 +17,8 @@ export default function InitialPage() {
     const [loading, setLoading] = useState(true);
     const [response, setResponse] = useState(null);
     const navigation = useNavigation();
+    const localhost = useGlobal('localhost');
+    const address = localhost.address;
     let [fontsLoaded] = useFonts({ 'Open Sans': require('../assets/fonts/OpenSans-Bold.ttf') });
 
     useEffect(() => {
@@ -24,7 +26,7 @@ export default function InitialPage() {
     }, [])
 
     useEffect(() => {
-        client.get(`http://192.168.1.111:8080/obra?key=${keyObra}`, (body) => {
+        client.get(`${address}/obra?key=${keyObra}`, (body) => {
             setDataObra(body);
             setLoadingObra(false);
         },

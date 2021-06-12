@@ -3,17 +3,17 @@ import { Text, View, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { useNavigation } from '@react-navigation/native';
 import client from '../../client';
+import { useGlobal } from '../../store';
 
 export default function QRCodeScanner() {
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
-
-    const [loadingSpinner, setLoadingSpinner] = useState(false);
     const [loading, setLoading] = useState(true);
     const [response, setResponse] = useState(null);
-
     const [readingType, setReadingType] = useState('');
     const [target, setTarget] = useState('');
+    const localhost = useGlobal('localhost');
+    const address = localhost.address;
 
     const navigation = useNavigation();
 
@@ -36,7 +36,7 @@ export default function QRCodeScanner() {
         } else if (readingType == 'setor') {
             path = "SectorView";
         }
-        client.get(`http://192.168.1.111:8080/${readingType}?key=${target}`, (body) => {
+        client.get(`${address}/${readingType}?key=${target}`, (body) => {
             Alert.alert(
                 `${body.titulo}`,
                 `Responsável: ${body.responsavel}`,
@@ -58,7 +58,7 @@ export default function QRCodeScanner() {
     const handleBarCodeScanned = ({ type, data }) => {
         setScanned(true);
         client.get(
-            `http://192.168.1.111:8080/tag?key=${data}`,
+            `${address}/tag?key=${data}`,
             (body) => {
                 setReadingType(body.tipo);
                 setTarget(body.alvo);
