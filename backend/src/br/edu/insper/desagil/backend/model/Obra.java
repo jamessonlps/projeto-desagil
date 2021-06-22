@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.edu.insper.desagil.backend.core.firestore.FirestoreAutokeyEntity;
-import br.edu.insper.desagil.backend.core.firestore.FirestoreEntity;
 
 public class Obra extends FirestoreAutokeyEntity  {
 	private String titulo;

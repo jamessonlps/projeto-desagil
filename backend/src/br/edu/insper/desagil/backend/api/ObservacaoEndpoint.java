@@ -64,7 +64,7 @@ public class ObservacaoEndpoint extends Endpoint<Observacao> {
 		body.put("key", observacao.getKey());
 		body.put("date", date.toString());
 		
-		Boolean logResult = addLog(args, date, observacao.isAlerta());
+		Boolean logResult = addLogCreation(args, observacao);
 		body.put("logResult", logResult.toString());
 		
 		Boolean addKeyResult = addKey(args, observacao);
@@ -127,7 +127,8 @@ public class ObservacaoEndpoint extends Endpoint<Observacao> {
 	}
 
 
-	private boolean addLog(Map<String, String> args, Date date, Boolean alerta) throws APIException {
+	private boolean addLogCreation(Map<String, String> args, Observacao observacao) throws APIException {
+		Date date = new Date();
 		try {
 			Map<String, String> argsObra= new HashMap<>();
 			String titulo = "";
@@ -158,15 +159,15 @@ public class ObservacaoEndpoint extends Endpoint<Observacao> {
 			Obra obra = obraEndpoint.get(argsObra);
 			String log;
 
-			if (alerta) {
+			if (observacao.isAlerta()) {
 				log = new SimpleDateFormat("dd/MM/yyyy - HH:mm").format(date) 
-						+ " - Um alerta foi adicionado ao "
+						+ " || Um alerta foi adicionado ao "
 						+ titulo;
 			}
 			
 			else {
 				log = new SimpleDateFormat("dd/MM/yyyy - HH:mm").format(date) 
-						+ " - Uma observação foi adicionada ao "
+						+ " || Uma observação foi adicionada ao "
 						+ titulo;
 			}
 			
@@ -179,22 +180,78 @@ public class ObservacaoEndpoint extends Endpoint<Observacao> {
 		}
 	}
 	
+	
 	@Override
 	public Map<String, String> put(Map<String, String> args, Observacao observacao) throws APIException {
 		ObservacaoDAO dao = new ObservacaoDAO();
 		Date date;
+		
+		observacao.atualizaUltimaModificacao();
 	    try {
 	        date = dao.update(observacao);
 	    } catch (DBException exception) {
 	    	throw new DatabaseRequestException(exception);
 	    }
 	    Map<String, String> body = new HashMap<>();
+	    
+	    Boolean logResult = addLogUpdate(args, observacao);
+	    body.put("logResult", logResult.toString());
 	    body.put("date", date.toString());
 	    body.put("key",  observacao.getKey());
 	    
 	    return body;
 	}
 	
+	private boolean addLogUpdate(Map<String, String> args, Observacao observacao) {
+		Date date = new Date();
+		
+		try {
+			Map<String, String> argsObra= new HashMap<>();
+			Map<String, String> argsReferente = new HashMap<>();
+			String titulo = "";
+			
+			if (args.containsKey("pavimento")) {
+				argsReferente.put("key", args.get("pavimento"));
+				PavimentoEndpoint endpoint = new PavimentoEndpoint();
+				Pavimento pavimento = endpoint.get(argsReferente);
+				argsObra.put("key", pavimento.getObra());
+				titulo = pavimento.getTitulo();
+				
+			}	
+			
+			else if(args.containsKey("setor")){
+				argsReferente.put("key", args.get("setor"));
+				SetorEndpoint endpoint = new SetorEndpoint();
+				Setor setor = endpoint.get(argsReferente);
+				argsObra.put("key", setor.getObra());
+				titulo = setor.getTitulo();
+			}
+			
+			ObraEndpoint obraEndpoint = new ObraEndpoint();
+			Obra obra = obraEndpoint.get(argsObra);
+			String log = "";
+			
+			if (args.get("addComment").contentEquals("true")) {	
+				log = new SimpleDateFormat("dd/MM/yyyy - HH:mm").format(date) 
+						+ " || Um comentário foi adicionado ao "
+						+ titulo;
+			}
+			
+			if (args.get("resolve").contentEquals("true")) {
+				log = new SimpleDateFormat("dd/MM/yyyy - HH:mm").format(date) 
+						+ " || Uma observação em "
+						+ titulo
+						+ " foi marcada como concluída";
+			}
+			
+			obra.addLog(log);
+			obraEndpoint.put(argsObra, obra);
+			
+			return true;
+		} catch (Exception e){
+			return false;
+		}
+	}
 	@Override
 	public Map<String, String> delete(Map<String, String> args) throws APIException {
 		ObservacaoDAO dao = new ObservacaoDAO();

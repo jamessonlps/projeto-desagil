@@ -2,16 +2,13 @@ package br.edu.insper.desagil.backend.api;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import br.edu.insper.desagil.backend.core.Endpoint;
 import br.edu.insper.desagil.backend.core.exception.APIException;
 import br.edu.insper.desagil.backend.core.exception.DBException;
 import br.edu.insper.desagil.backend.core.exception.DatabaseRequestException;
-import br.edu.insper.desagil.backend.db.DocumentoDAO;
 import br.edu.insper.desagil.backend.db.PavimentoDAO;
-import br.edu.insper.desagil.backend.model.Documento;
 import br.edu.insper.desagil.backend.model.Pavimento;
 
 public class PavimentoEndpoint extends Endpoint<Pavimento> {

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.edu.insper.desagil.backend.core.firestore.FirestoreAutokeyEntity;
-import br.edu.insper.desagil.backend.core.firestore.FirestoreEntity;
 
 public class Setor extends FirestoreAutokeyEntity {
 	private String obra;				// key da Obra a que se refere

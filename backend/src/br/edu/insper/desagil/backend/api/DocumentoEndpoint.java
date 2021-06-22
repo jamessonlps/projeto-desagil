@@ -66,7 +66,7 @@ public class DocumentoEndpoint extends Endpoint<Documento> {
 		Boolean addKeyResult = addKey(args, documento);
 		body.put("addKeyResult",  addKeyResult.toString());
 		
-		Boolean logResult = addLog(args, date, documento);
+		Boolean logResult = addLog(args, documento);
 		body.put("LogResult", logResult.toString());
 		
 		return body;
@@ -115,8 +115,9 @@ public class DocumentoEndpoint extends Endpoint<Documento> {
 		}
 	}
 	
-	public boolean addLog(Map<String, String> args, Date date, Documento documento) {
+	public boolean addLog(Map<String, String> args, Documento documento) {
 		Boolean result = false;
+		Date date = new Date();
 		try {
 			Map<String, String> argsObra = new HashMap<>();
 			argsObra.put("key",  documento.getObra());

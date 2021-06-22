@@ -9,9 +9,7 @@ import br.edu.insper.desagil.backend.core.Endpoint;
 import br.edu.insper.desagil.backend.core.exception.APIException;
 import br.edu.insper.desagil.backend.core.exception.DBException;
 import br.edu.insper.desagil.backend.core.exception.DatabaseRequestException;
-import br.edu.insper.desagil.backend.db.ObservacaoDAO;
 import br.edu.insper.desagil.backend.db.SetorDAO;
-import br.edu.insper.desagil.backend.model.Observacao;
 import br.edu.insper.desagil.backend.model.Setor;
 
 public class SetorEndpoint extends Endpoint<Setor> {
