@@ -6,8 +6,8 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
+      "image": "./src/connection/connectdata_marca_1_3.jpg",
+      "resizeMode": "natural",
       "backgroundColor": "#ffffff"
     },
     "updates": {
