@@ -27,7 +27,6 @@ class SetorEndpointTest {
 	private SetorEndpoint setorEndpoint;
 	private SetorDAO setorDAO;
 	
-	
 	private PavimentoEndpoint pavimentoEndpoint;
 	private PavimentoDAO pavimentoDAO;
 	
@@ -51,7 +50,7 @@ class SetorEndpointTest {
 		pavimentoDAO = new PavimentoDAO();
 		pavimentoDAO.deleteAll();
 		pavimentoEndpoint = new PavimentoEndpoint();
-		Map<String, String> newPavimentoPost = pavimentoEndpoint.post(null,  new Pavimento(newObraPost.get("key"), "Pavimento 12", "José Garcia"));
+		pavimentoEndpoint.post(null,  new Pavimento(newObraPost.get("key"), "Pavimento 12", "José Garcia"));
 		
 		setorDAO = new SetorDAO();
 		setorDAO.deleteAll();
@@ -64,7 +63,6 @@ class SetorEndpointTest {
 	@Test
 	public void postAndGet() throws APIException {
 		assertTrue(newSetorPost.containsKey("date"));
-		
 		
 		Setor setorGet = setorEndpoint.get(newSetorPost);
 		assertEquals(newSetorPost.get("key"), setorGet.getKey());
@@ -93,12 +91,9 @@ class SetorEndpointTest {
 		
 		Map<String, String> resultDelete = setorEndpoint.delete(newSetorPost);
 		assertTrue(resultDelete.containsKey("date"));
-		
 				
 		assertThrows(APIException.class, () -> {
 			setorEndpoint.get(newSetorPost);
 		});
-	}
-
-	
+	}	
 }
