@@ -7,10 +7,10 @@ import java.util.List;
 import br.edu.insper.desagil.backend.core.firestore.FirestoreAutokeyEntity;
 
 public class Observacao extends FirestoreAutokeyEntity{
-	private boolean alerta;		// diferencia observaï¿½ï¿½es comuns de alertas
-	private boolean resolvido;	// (front) exibe apenas observaï¿½ï¿½es nao resolvidas
-	private String dataCriacao;
-	private String ultimaModificacao;
+	private boolean alerta;					// (front) diferencia observação comum de alertas
+	private boolean resolvido;				// (front) diferencia alertas atuais dos resolvidos
+	private String dataCriacao;				
+	private String ultimaModificacao;		
 	private String assunto;
 	private String autor;
 	private String cargo;
@@ -31,9 +31,9 @@ public class Observacao extends FirestoreAutokeyEntity{
 		this.alerta = alerta;
 		this.resolvido = false;
 		
+		this.assunto = assunto;
 		this.autor = autor;
 		this.cargo = cargo;
-		this.assunto = assunto;
 		
 		Date data = new Date();
 		this.dataCriacao = data.toString();
@@ -48,33 +48,16 @@ public class Observacao extends FirestoreAutokeyEntity{
 		this.resolvido = resolvido;
 	}
 
+	public boolean isAlerta() {
+		return alerta;
+	}
+	
 	public String getAssunto() {
 		return assunto;
 	}
 
 	public void setAssunto(String assunto) {
 		this.assunto = assunto;
-	}
-
-	public boolean isAlerta() {
-		return alerta;
-	}
-	
-	public void changeAlerta() {
-		this.alerta = !this.alerta;
-	}
-
-	public String getDataCriacao() {
-		return dataCriacao;
-	}
-
-	public String getUltimaModificacao() {
-		return ultimaModificacao;
-	}
-
-	public void atualizaUltimaModificacao() {
-		Date novaData = new Date();
-		this.ultimaModificacao = novaData.toString();
 	}
 
 	public String getAutor() {
@@ -85,6 +68,19 @@ public class Observacao extends FirestoreAutokeyEntity{
 		return cargo;
 	}
 
+	public String getDataCriacao() {
+		return dataCriacao;
+	}
+	
+	public String getUltimaModificacao() {
+		return ultimaModificacao;
+	}
+	
+	public void atualizaUltimaModificacao() {
+		Date novaData = new Date();
+		this.ultimaModificacao = novaData.toString();
+	}
+	
 	public List<String> getComentarios() {
 		return comentarios;
 	}
@@ -92,7 +88,4 @@ public class Observacao extends FirestoreAutokeyEntity{
 	public void setComentarios(List<String> comentarios) {
 		this.comentarios = comentarios;
 	}
-	
-	
-
 }

@@ -9,8 +9,8 @@ public class Pavimento extends FirestoreAutokeyEntity {
 	private String obra;					// Key da Obra a que se refere
 	private String titulo; 					// exibido pelo FrontEnd
 	private String responsavel;				// exibido pelo Front
-	private List<String> documentos; 		// Lista com os id's dos Documentos
-	private List<String> setores; 			// Lista com os id's dos Setores
+	private List<String> documentos; 		// Lista com as keys dos Documentos
+	private List<String> setores; 			// Lista com as keys dos Setores
 	private List<String> observacoes;		// Lista com as keys das Observações
 	
 	public Pavimento() {
@@ -30,12 +30,14 @@ public class Pavimento extends FirestoreAutokeyEntity {
 		this.setores = new ArrayList<>();
 	}
 	
-	public Pavimento(String obra, String titulo, String responsavel, List<String> documentos) {
+	public Pavimento(String obra, String titulo, String responsavel, List<String> documentos, List<String> setores, List<String> observacoes) {
 		super();
 		this.obra = obra;
 		this.titulo = titulo;
 		this.responsavel = responsavel;
 		this.documentos = documentos;
+		this.observacoes = observacoes;
+		this.setores = setores;
 	}
 
 	public String getObra() {
@@ -45,7 +47,6 @@ public class Pavimento extends FirestoreAutokeyEntity {
 	public String getTitulo() {
 		return titulo;
 	}
-
 	
 	public void setTitulo(String titulo) {
 		this.titulo = titulo;
@@ -83,13 +84,12 @@ public class Pavimento extends FirestoreAutokeyEntity {
 		return observacoes;
 	}
 	
-	public void setObservacoes(List<String> observacoes) {
-		this.observacoes = observacoes;
-	}
-
 	public void addObservacao(String key) {
 		this.observacoes.add(key);
 	}
 	
+	public void setObservacoes(List<String> observacoes) {
+		this.observacoes = observacoes;
+	}
 	
 }

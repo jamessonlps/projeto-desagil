@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.IOException;
 import java.util.Map;
 
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,10 +14,8 @@ import br.edu.insper.desagil.backend.Backend;
 import br.edu.insper.desagil.backend.core.exception.APIException;
 import br.edu.insper.desagil.backend.core.exception.DBException;
 import br.edu.insper.desagil.backend.db.ObraDAO;
-import br.edu.insper.desagil.backend.db.PavimentoDAO;
 import br.edu.insper.desagil.backend.db.SetorDAO;
 import br.edu.insper.desagil.backend.model.Obra;
-import br.edu.insper.desagil.backend.model.Pavimento;
 import br.edu.insper.desagil.backend.model.Setor;
 
 
@@ -26,10 +23,7 @@ class SetorEndpointTest {
 	private Map<String, String> newSetorPost;
 	private SetorEndpoint setorEndpoint;
 	private SetorDAO setorDAO;
-	
-	private PavimentoEndpoint pavimentoEndpoint;
-	private PavimentoDAO pavimentoDAO;
-	
+
 	private ObraEndpoint obraEndpoint;
 	private ObraDAO obraDAO;
 	
@@ -47,16 +41,10 @@ class SetorEndpointTest {
 		obraEndpoint = new ObraEndpoint();
 		Map<String, String> newObraPost = obraEndpoint.post(null,  new Obra("FL Square", "Faria Lima 1082", "Oscar Niemeyer"));
 		
-		pavimentoDAO = new PavimentoDAO();
-		pavimentoDAO.deleteAll();
-		pavimentoEndpoint = new PavimentoEndpoint();
-		pavimentoEndpoint.post(null,  new Pavimento(newObraPost.get("key"), "Pavimento 12", "José Garcia"));
-		
 		setorDAO = new SetorDAO();
 		setorDAO.deleteAll();
 		setorEndpoint = new SetorEndpoint();
 		newSetorPost = setorEndpoint.post(null,  new Setor(newObraPost.get("key"), "Escritório XP Investimentos", "José Garcia"));
-		
 	}
 	
 

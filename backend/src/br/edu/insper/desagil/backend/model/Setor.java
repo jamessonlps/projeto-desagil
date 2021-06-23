@@ -9,8 +9,8 @@ public class Setor extends FirestoreAutokeyEntity {
 	private String obra;				// key da Obra a que se refere
 	private String titulo; 				// exibido pelo FrontEnd
 	private String responsavel;			// exibido pelo FrontEnd
-	private List<String> documentos; 	// Lista com os id's dos documentos
-	private List<String> observacoes;	// Lista com as key's de observacoes
+	private List<String> documentos; 	// Lista com as keys dos documentos
+	private List<String> observacoes;	// Lista com as keys de observacoes
 	
 	public Setor() {
 		super();
@@ -27,13 +27,13 @@ public class Setor extends FirestoreAutokeyEntity {
 		this.observacoes = new ArrayList<>();
 	}
 	
-	public Setor(String obra, String titulo, String responsavel, List<String> documentos) {
+	public Setor(String obra, String titulo, String responsavel, List<String> documentos, List<String> observacoes) {
 		super();
 		this.obra = obra;
 		this.titulo = titulo;
 		this.responsavel = responsavel;
 		this.documentos = documentos;
-		this.observacoes = new ArrayList<>();
+		this.observacoes = observacoes;
 	}
 
 	public String getObra() {
@@ -72,12 +72,11 @@ public class Setor extends FirestoreAutokeyEntity {
 		return observacoes;
 	}
 
-	public void setObservacoes(List<String> observacoes) {
-		this.observacoes = observacoes;
-	}
-	
 	public void addObservacao(String key) {
 		this.observacoes.add(key);
 	}
 	
+	public void setObservacoes(List<String> observacoes) {
+		this.observacoes = observacoes;
+	}
 }
