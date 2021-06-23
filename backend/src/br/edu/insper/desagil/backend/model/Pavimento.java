@@ -20,7 +20,7 @@ public class Pavimento extends FirestoreAutokeyEntity {
 		this.setores = new ArrayList<>();
 	}
 	
-	public Pavimento(int codigo, String obra, String titulo, String responsavel) {
+	public Pavimento(String obra, String titulo, String responsavel) {
 		super();
 		this.obra = obra;
 		this.titulo = titulo;
