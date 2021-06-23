@@ -18,10 +18,12 @@ public class Obra extends FirestoreAutokeyEntity  {
 		this.alertas = new ArrayList<>();
 	}
 	
-	public Obra(String titulo) {
+	public Obra(String titulo, String endereco, String responsavel) {
 		super();
 
 		this.titulo = titulo;
+		this.endereco = endereco;
+		this.responsavel = responsavel;
 		
 		this.logs = new ArrayList<>();
 		this.alertas = new ArrayList<>();

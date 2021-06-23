@@ -17,6 +17,7 @@ import br.edu.insper.desagil.backend.Backend;
 import br.edu.insper.desagil.backend.core.exception.APIException;
 import br.edu.insper.desagil.backend.core.exception.DBException;
 import br.edu.insper.desagil.backend.db.PavimentoDAO;
+import br.edu.insper.desagil.backend.model.Obra;
 import br.edu.insper.desagil.backend.model.Pavimento;
 
 
@@ -26,22 +27,27 @@ class PavimentoEndpointTest {
 	private Pavimento pavimento;
 	private PavimentoDAO dao;
 	private Map<String, String> resultPost;
+	private ObraEndpoint obraEndpoint;
 	
 	@BeforeAll
 	public static void initialSetUp() throws IOException {
 		Backend.init("firestore_test.json");
 	}
+
 	
 	@BeforeEach 
 	public void setUp() throws APIException, DBException {
+		obraEndpoint = new ObraEndpoint();
+		Map<String, String> obraPost = obraEndpoint.post(null, new Obra("Ponte estaiada", "Rua do Sol", "Ricardo Brennand"));
 		endpoint = new PavimentoEndpoint();
 		args = new HashMap<>();
 		dao = new PavimentoDAO();
 		dao.deleteAll();
 		
-		pavimento = new Pavimento(123456, 2222, "Stairway to Heaven", "Jimmy Page");
+		pavimento = new Pavimento(obraPost.get("key"), "Stairway to Heaven", "Jimmy Page");
+		Map<String, String> pavimentoPost = endpoint.post(null, pavimento);
 		
-		args.put("codigo", "123456");
+		args.put("key", pavimentoPost.get("key"));
 		resultPost = endpoint.post(args, pavimento);
 	}
 	
@@ -49,23 +55,25 @@ class PavimentoEndpointTest {
 	@Test
 	public void postAndGet() throws APIException {
 		assertTrue(resultPost.containsKey("date"));
-		
 		Pavimento pavimentoGet = endpoint.get(args);
-		assertEquals(123456, pavimentoGet.getCodigo());
-				
+		assertEquals(args.get("key"), pavimentoGet.getKey());
 	}
 	
 	@Test
 	public void postPutAndGet() throws APIException {
 		assertTrue(resultPost.containsKey("date"));
 		
-		pavimento.setTitulo("This is NOT Heaven");
-		Map<String, String> resultPut = endpoint.put(args, pavimento);
+		Pavimento pavimentoGet = endpoint.get(args);
+		pavimentoGet.setTitulo("This is NOT Heaven");
+		
+		Map<String, String> resultPut = endpoint.put(args, pavimentoGet);
 		assertTrue(resultPut.containsKey("date"));
 		
-		Pavimento pavimentoGet = endpoint.get(args);
-		assertEquals(123456, pavimentoGet.getCodigo());
-		assertEquals("This is NOT Heaven", pavimentoGet.getTitulo());
+		Pavimento pavimentoFinalGet = endpoint.get(args);
+		
+		assertEquals(args.get("key"), pavimentoFinalGet.getKey());
+		assertEquals("This is NOT Heaven", pavimentoFinalGet.getTitulo());
+
 	}
 	
 	@Test
@@ -74,7 +82,6 @@ class PavimentoEndpointTest {
 
 		Map<String, String> resultDelete = endpoint.delete(args);
 		assertTrue(resultDelete.containsKey("date"));
-		
 				
 		APIException exception = assertThrows(APIException.class, () -> {
 			endpoint.get(args);
