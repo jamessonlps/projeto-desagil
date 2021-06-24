@@ -72,11 +72,9 @@ class CasosDeUso {
 		observacaoDAO.deleteAll();
 		tagDAO.deleteAll();
 		
-		// Criar Obra
 		obraEndpoint = new ObraEndpoint();
 		infoObra = obraEndpoint.post(null, new Obra("Campos Elíseos - Torre A", "Rua do Paraíso", "Zeus"));
 		
-		// Documentos:
 		documentoEndpoint = new DocumentoEndpoint();
 		Documento documentoA = new Documento (infoObra.get("key"), "Planta Escritório", "planta baixa", "https://firebasestorage.googleapis.com/v0/b/jalhervan-teste.appspot.com/o/Casos%20de%20Uso%2Fplanta%20-%20apartamento.pdf?alt=media&token=47a85a08-6f41-48a3-b658-950f6e99dc5c" );
 		Documento documentoB = new Documento (infoObra.get("key"), "Planta Pavimento 12", "planta baixa", "https://firebasestorage.googleapis.com/v0/b/jalhervan-teste.appspot.com/o/Casos%20de%20Uso%2Fplantas%20-%20pavimentos%20-%20detalhada.pdf?alt=media&token=2c7290a1-2e06-43fa-b312-0ab74405b6bd" );

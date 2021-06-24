@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -16,16 +15,19 @@ import org.junit.jupiter.api.Test;
 import br.edu.insper.desagil.backend.Backend;
 import br.edu.insper.desagil.backend.core.exception.APIException;
 import br.edu.insper.desagil.backend.core.exception.DBException;
+import br.edu.insper.desagil.backend.db.ObraDAO;
 import br.edu.insper.desagil.backend.db.TagDAO;
+import br.edu.insper.desagil.backend.model.Obra;
 import br.edu.insper.desagil.backend.model.Tag;
 
 
 class TagEndpointTest {
-	private TagEndpoint endpoint;
-	private Map<String, String> args;
-	private Tag tag;
-	private TagDAO dao;
-	private Map<String, String> resultPost;
+	private Map<String, String> newTagPost;
+	private TagEndpoint tagEndpoint;
+	private TagDAO tagDao;
+	private ObraEndpoint obraEndpoint;
+	private ObraDAO obraDAO;
+
 	
 	@BeforeAll
 	public static void initialSetUp() throws IOException {
@@ -34,50 +36,53 @@ class TagEndpointTest {
 	
 	@BeforeEach 
 	public void setUp() throws APIException, DBException {
-		endpoint = new TagEndpoint();
-		args = new HashMap<>();
-		dao = new TagDAO();
-		dao.deleteAll();
+		obraDAO = new ObraDAO();
+		obraDAO.deleteAll();
+		obraEndpoint = new ObraEndpoint();
+		Map<String, String> obraPost = obraEndpoint.post(null, new Obra("Ponte estaiada", "Rua do Sol", "Ricardo Brennand"));
 		
-		tag = new Tag(88997, 1111, 2222, "Pavimento");
-		
-		args.put("id", "88997");
-		resultPost = endpoint.post(args, tag);
+		tagDao = new TagDAO();
+		tagDao.deleteAll();
+		tagEndpoint = new TagEndpoint();
+		newTagPost = tagEndpoint.post(null,  new Tag(obraPost.get("key"), "Pavimento", "Pavimento"));
 	}
 	
 
 	@Test
 	public void postAndGet() throws APIException {
-		assertTrue(resultPost.containsKey("date"));
+		assertTrue(newTagPost.containsKey("date"));
 		
-		Tag tagGet = endpoint.get(args);
-		assertEquals(88997, tagGet.getId());
+		Tag tagGet = tagEndpoint.get(newTagPost);
+		assertEquals(newTagPost.get("key"), tagGet.getKey());
 				
 	}
 	
 	@Test
 	public void postPutAndGet() throws APIException {
-		assertTrue(resultPost.containsKey("date"));
+		assertTrue(newTagPost.containsKey("date"));
 		
-		tag.setTipo("Setor");
-		Map<String, String> resultPut = endpoint.put(args, tag);
+		Tag tagGet = tagEndpoint.get(newTagPost);
+		tagGet.setTipo("Setor");;
+		
+		Map<String, String> resultPut = tagEndpoint.put(newTagPost, tagGet);
 		assertTrue(resultPut.containsKey("date"));
 		
-		Tag tagGet = endpoint.get(args);
-		assertEquals(88997, tagGet.getId());
-		assertEquals("Setor", tagGet.getTipo());
+		Tag modifiedTagGet = tagEndpoint.get(newTagPost);
+		assertEquals(newTagPost.get("key"), modifiedTagGet.getKey());
+		assertEquals("Setor", modifiedTagGet.getTipo());
+
 	}
 	
 	@Test
 	public void postDeleteAndGet() throws APIException {
-		assertTrue(resultPost.containsKey("date"));
+		assertTrue(newTagPost.containsKey("date"));
 
-		Map<String, String> resultDelete = endpoint.delete(args);
+		Map<String, String> resultDelete = tagEndpoint.delete(newTagPost);
 		assertTrue(resultDelete.containsKey("date"));
 		
 				
-		APIException exception = assertThrows(APIException.class, () -> {
-			endpoint.get(args);
+		assertThrows(APIException.class, () -> {
+			tagEndpoint.get(newTagPost);
 			
 		});
 
