@@ -7,10 +7,10 @@ import br.edu.insper.desagil.backend.core.firestore.FirestoreAutokeyEntity;
 
 public class Setor extends FirestoreAutokeyEntity {
 	private String obra;				// key da Obra a que se refere
-	private String titulo; 				// exibido pelo FrontEnd
+	private String titulo; 				// exibido pelo FrontEndd
 	private String responsavel;			// exibido pelo FrontEnd
 	private List<String> documentos; 	// Lista com as keys dos documentos
-	private List<String> observacoes;	// Lista com as keys de observacoes
+	private List<String> observacoes;	// Lista com as keys das observacoes
 	
 	public Setor() {
 		super();
@@ -27,13 +27,13 @@ public class Setor extends FirestoreAutokeyEntity {
 		this.observacoes = new ArrayList<>();
 	}
 	
-	public Setor(String obra, String titulo, String responsavel, List<String> documentos, List<String> observacoes) {
+	public Setor(String obra, String titulo, String responsavel, List<String> documentos) {
 		super();
 		this.obra = obra;
 		this.titulo = titulo;
 		this.responsavel = responsavel;
 		this.documentos = documentos;
-		this.observacoes = observacoes;
+		this.observacoes = new ArrayList<>();
 	}
 
 	public String getObra() {

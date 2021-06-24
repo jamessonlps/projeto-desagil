@@ -19,11 +19,8 @@ import br.edu.insper.desagil.backend.core.exception.APIException;
 import br.edu.insper.desagil.backend.core.exception.DBException;
 import br.edu.insper.desagil.backend.db.ObraDAO;
 import br.edu.insper.desagil.backend.model.Obra;
-import br.edu.insper.desagil.backend.model.Setor;
-
 
 class ObraEndpointTest {
-	private ObraEndpoint endpoint;
 	private Map<String, String> args;
 	private Obra obra;
 	private ObraDAO dao;
@@ -84,7 +81,7 @@ class ObraEndpointTest {
 		assertTrue(resultDelete.containsKey("date"));
 		
 				
-		APIException exception = assertThrows(APIException.class, () -> {
+		assertThrows(APIException.class, () -> {
 			obraEndpoint.get(args);
 			
 		});
