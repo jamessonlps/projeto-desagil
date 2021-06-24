@@ -5,7 +5,7 @@ import br.edu.insper.desagil.backend.core.firestore.FirestoreAutokeyEntity;
 
 public class Documento extends FirestoreAutokeyEntity {
 
-	private String obra;			// Guarda o id da obra a qual se refere
+	private String obra;			// Key da obra a qual se refere
 	private String titulo;			// Será exibido pelo front-end
 	private String descricao; 		// Breve descrição sobre o que se trata o documento 
 	private String url;				// Link para acessarmos o documento

@@ -30,14 +30,14 @@ public class Pavimento extends FirestoreAutokeyEntity {
 		this.setores = new ArrayList<>();
 	}
 	
-	public Pavimento(String obra, String titulo, String responsavel, List<String> documentos, List<String> setores, List<String> observacoes) {
+	public Pavimento(String obra, String titulo, String responsavel, List<String> documentos, List<String> setores) {
 		super();
 		this.obra = obra;
 		this.titulo = titulo;
 		this.responsavel = responsavel;
 		this.documentos = documentos;
-		this.observacoes = observacoes;
 		this.setores = setores;
+		this.observacoes = new ArrayList<>();
 	}
 
 	public String getObra() {
