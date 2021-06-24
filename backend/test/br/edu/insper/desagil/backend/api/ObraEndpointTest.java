@@ -19,6 +19,7 @@ import br.edu.insper.desagil.backend.core.exception.APIException;
 import br.edu.insper.desagil.backend.core.exception.DBException;
 import br.edu.insper.desagil.backend.db.ObraDAO;
 import br.edu.insper.desagil.backend.model.Obra;
+import br.edu.insper.desagil.backend.model.Setor;
 
 
 class ObraEndpointTest {
@@ -27,6 +28,7 @@ class ObraEndpointTest {
 	private Obra obra;
 	private ObraDAO dao;
 	private Map<String, String> resultPost;
+	private ObraEndpoint obraEndpoint;
 	
 	@BeforeAll
 	public static void initialSetUp() throws IOException {
@@ -35,15 +37,17 @@ class ObraEndpointTest {
 	
 	@BeforeEach 
 	public void setUp() throws APIException, DBException {
-		endpoint = new ObraEndpoint();
+		obraEndpoint = new ObraEndpoint();
 		args = new HashMap<>();
+		
 		dao = new ObraDAO();
 		dao.deleteAll();
 		
-		obra = new Obra(11111, "Obra magnífica de Gizé");
+		obra = new Obra("Ponte estaiada", "Rua da lua", "Thierry da Silva");
+		Map<String, String> obraPost = obraEndpoint.post(null, obra);
 		
-		args.put("codigo", "11111");
-		resultPost = endpoint.post(args, obra);
+		args.put("key", obraPost.get("key"));
+		resultPost = obraEndpoint.post(args, obra);
 	}
 	
 
@@ -51,8 +55,8 @@ class ObraEndpointTest {
 	public void postAndGet() throws APIException {
 		assertTrue(resultPost.containsKey("date"));
 		
-		Obra obraGet = endpoint.get(args);
-		assertEquals(11111, obraGet.getCodigo());
+		Obra obraGet = obraEndpoint.get(resultPost);
+		assertEquals(resultPost.get("key"), obraGet.getKey());
 				
 	}
 	
@@ -60,25 +64,28 @@ class ObraEndpointTest {
 	public void postPutAndGet() throws APIException {
 		assertTrue(resultPost.containsKey("date"));
 		
-		obra.setTitulo("Obra Ainda mais Magnífica de Gizé");
-		Map<String, String> resultPut = endpoint.put(args, obra);
+		Obra obraGet = obraEndpoint.get(resultPost);
+		obraGet.setResponsavel("Jackson Leonardo");
+		
+		Map<String, String> resultPut = obraEndpoint.put(resultPost, obraGet);
 		assertTrue(resultPut.containsKey("date"));
 		
-		Obra obraGet = endpoint.get(args);
-		assertEquals(11111, obraGet.getCodigo());
-		assertEquals("Obra Ainda mais Magnífica de Gizé", obraGet.getTitulo());
+		Obra modifiedObraGet = obraEndpoint.get(resultPost);
+		assertEquals(resultPost.get("key"), modifiedObraGet.getKey());
+		assertEquals("Jackson Leonardo", modifiedObraGet.getResponsavel());
+		
 	}
 	
 	@Test
 	public void postDeleteAndGet() throws APIException {
 		assertTrue(resultPost.containsKey("date"));
 
-		Map<String, String> resultDelete = endpoint.delete(args);
+		Map<String, String> resultDelete = obraEndpoint.delete(args);
 		assertTrue(resultDelete.containsKey("date"));
 		
 				
 		APIException exception = assertThrows(APIException.class, () -> {
-			endpoint.get(args);
+			obraEndpoint.get(args);
 			
 		});
 
