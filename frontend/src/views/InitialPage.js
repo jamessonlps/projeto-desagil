@@ -19,7 +19,7 @@ export default function InitialPage() {
     const navigation = useNavigation();
     const localhost = useGlobal('localhost');
     const address = localhost.address;
-    let [fontsLoaded] = useFonts({ 'Open Sans': require('../assets/fonts/OpenSans-Bold.ttf') });
+    // let [fontsLoaded] = useFonts({ 'Open Sans': require('../assets/fonts/OpenSans-Bold.ttf') });
 
     useEffect(() => {
         getLastObra();
@@ -47,36 +47,32 @@ export default function InitialPage() {
             })
     }
 
-    if (!fontsLoaded) {
-        return (<AppLoading />)
-    } else {
-        return (
-            <>
-                <ScrollView style={styles.container}>
-                    <Text style={styles.logTitle}>Registros da última obra</Text>
-                    <View style={styles.lineStyle} />
-                    {
-                        loadingObra ? (<ActivityIndicator size={25} color="#2385A2" />)
-                        : !loadingObra && dataObra !== null ?
-                        dataObra.logs.map((item, index) => 
-                            <View style={{marginHorizontal: 5}} key={index}> 
-                                <LogCard content={item}/> 
-                            </View>)
-                        : (<Text style={{alignSelf: 'center', color: 'gray'}}>Não há conteúdo a ser exibido</Text>)
-                    }
-                </ScrollView>
-                <View style={styles.containerText}>
-                    <TouchableOpacity
-                        style={styles.qrbutton} 
-                        onPress={() => navigation.navigate('QR Code Scanner')}
-                    >
-                        <QRCodeIcon width={96} height={96} />
-                    </TouchableOpacity>
-                </View>
+    return (
+        <>
+            <ScrollView style={styles.container}>
+                <Text style={styles.logTitle}>Registros da última obra</Text>
+                <View style={styles.lineStyle} />
+                {
+                    loadingObra ? (<ActivityIndicator size='large' color="#2385A2" />)
+                    : !loadingObra && dataObra !== null ?
+                    dataObra.logs.map((item, index) => 
+                        <View style={{marginHorizontal: 5}} key={index}> 
+                            <LogCard content={item}/> 
+                        </View>)
+                    : (<Text style={{alignSelf: 'center', color: 'gray'}}>Não há conteúdo a ser exibido</Text>)
+                }
+            </ScrollView>
+            <View style={styles.containerText}>
+                <TouchableOpacity
+                    style={styles.qrbutton} 
+                    onPress={() => navigation.navigate('QR Code Scanner')}
+                >
+                    <QRCodeIcon width={96} height={96} />
+                </TouchableOpacity>
+            </View>
 
-            </>
-        );
-    }
+        </>
+    );
 }
 
 const styles = StyleSheet.create({
@@ -118,7 +114,7 @@ const styles = StyleSheet.create({
         color: '#2D2A9B',
         fontSize: 20,
         // fontWeight: 'bold',
-        fontFamily: 'Open Sans'
+        // fontFamily: 'Open Sans'
     },
     lineStyle: {
         borderWidth: 0.3,

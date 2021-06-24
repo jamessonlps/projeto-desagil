@@ -37,7 +37,7 @@ export default function SectorsList({ route }) {
                     <NavigateButton 
                         key={index}
                         destino={"SectorView"}
-                        dados={item}
+                        dados={{...item, keyRef: item.key}}
                         titulo={item.titulo}
                         detalhes={item.descricao}
                         dataCriacao={item.dataCriacao}

@@ -1,14 +1,19 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { formatData } from '../utils/FormatDate';
+import { useNavigation } from '@react-navigation/native';
 
 export default function CommentCard(props) {
+    const navigation = useNavigation();
+
     return (
-        <View style={styles.cardContainer}>
-            <Text style={styles.cardDescription}>{props.texto}</Text>
+        <TouchableOpacity 
+            style={styles.cardContainer}
+            onPress={() => navigation.navigate(props.destino, props.dados)}>
+            <Text style={styles.cardDescription}>{props.assunto}</Text>
             <Text style={styles.cardDate}>{formatData(props.dataCriacao)}</Text>
             <View style={{borderWidth: 0.15, borderColor: "#000000", marginTop: 20}} />
-        </View>
+        </TouchableOpacity>
     );
 }
 
