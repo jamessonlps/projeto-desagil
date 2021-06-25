@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { StyleSheet, View, Text, ActivityIndicator, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import client from '../../client';
 import { useGlobal } from '../../store';
@@ -6,10 +6,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { formatData } from '../utils/FormatDate';
 import SendIcon from '../icons/send-arrow';
+import QRCode from '../icons/qr-code-header';
 
 export default function CommentsView({ route }) {
     const [commentInput, setCommentInput] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [sendLoading, setSendLoading] = useState(false);
+    const [resolveLoading, setResolveLoading] = useState(false);
     const [userName, setUserName] = useState(null);
     const [listComments, setListComments] = useState([]);
     const [dataNavigation, setDataNavigation] = useState(null);
@@ -17,6 +20,18 @@ export default function CommentsView({ route }) {
     const localhost = useGlobal('localhost');
     const address = localhost.address;
     const navigation = useNavigation();
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('QR Code Scanner')}
+                    style={{paddingRight: 15}}>
+                    <QRCode width={30} height={30} />
+                </TouchableOpacity>
+            )
+        });
+    }, [navigation]);
 
     useEffect(() => {
         getUserSetup();
@@ -35,6 +50,7 @@ export default function CommentsView({ route }) {
 
     function sendComment() {
         if (commentInput !== '' && commentInput !== undefined) {
+            setSendLoading(true);
             let now = getDate();
             let newComment = now + ` || ${userName} || ${userOccupation} || ${commentInput}`
             let comments = [];
@@ -57,14 +73,14 @@ export default function CommentsView({ route }) {
                 `${address}/observacao?key=${route.params?.key}&${route.params?.tipoObra}=${route.params?.keyRef}&addComment=true&resolve=false`,
                 body,
                 (message) => {
-                    console.log(message);
                     setListComments(comments);
                     setCommentInput('');
-                    // redirect();
+                    setSendLoading(false);
                 },
                 () => {
                     setLoading(false);
                     setCommentInput('');
+                    setSendLoading(false);
                 },
                 () => {
                     setLoading(false);
@@ -74,6 +90,7 @@ export default function CommentsView({ route }) {
     }
 
     function resolveComment() {
+        setResolveLoading(true);
         client.put(
             `${address}/observacao?key=${route.params?.key}&${route.params?.tipoObra}=${route.params?.keyRef}&addComment=false&resolve=true`,
             {
@@ -86,10 +103,13 @@ export default function CommentsView({ route }) {
                 "key": route.params?.key
             },
             (message) => {
-                console.log(message);
+                setResolveLoading(false);
                 redirect();
             },
-            () => setLoading(false),
+            () => {
+                setLoading(false);
+                setResolveLoading(false);
+            },
             () => setLoading(false)
         );
     }
@@ -152,11 +172,16 @@ export default function CommentsView({ route }) {
             </View>
 
             <View style={styles.resolvedButton}>
-                <TouchableOpacity 
-                    style={styles.buttonSubmit} 
-                    onPress={resolveComment}>
-                    <Text style={styles.textResolvedButton}>Marcar como resolvido</Text>
-                </TouchableOpacity>
+                {
+                    resolveLoading ? (<ActivityIndicator size='large' color='#2385A2' />)
+                    : (
+                        <TouchableOpacity 
+                            style={styles.buttonSubmit} 
+                            onPress={resolveComment}>
+                            <Text style={styles.textResolvedButton}>Marcar como resolvido</Text>
+                        </TouchableOpacity>
+                    )
+                }
             </View>
         </ScrollView>
 
@@ -170,11 +195,16 @@ export default function CommentsView({ route }) {
                 }}
                 value={commentInput}
             />
-            <TouchableOpacity 
-                style={styles.inputButton}
-                onPress={() => sendComment()}>
-                <SendIcon width={40} height={40} />
-            </TouchableOpacity>
+            {
+                sendLoading ? (<ActivityIndicator size='large' color='#2385A2' />)
+                : (
+                    <TouchableOpacity 
+                        style={styles.inputButton}
+                        onPress={() => sendComment()}>
+                        <SendIcon width={40} height={40} />
+                    </TouchableOpacity>
+                )
+            }
         </View>
         </>
     );

@@ -1,9 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
 import { StyleSheet, View, Text, ActivityIndicator, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { formatData } from '../utils/FormatDate';
+import QRCode from '../icons/qr-code-header';
+import { useNavigation } from '@react-navigation/native';
 
 export default function CommentsView({ route }) {
     const [listComments, setListComments] = useState(null);
+    const navigation = useNavigation();
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('QR Code Scanner')}
+                    style={{paddingRight: 15}}>
+                    <QRCode width={30} height={30} />
+                </TouchableOpacity>
+            )
+        });
+    }, [navigation]);
 
     useEffect(() => {
         setListComments(route.params?.comentarios);

@@ -3,13 +3,20 @@ import { View, Text, StyleSheet } from 'react-native';
 import LogIcon from '../icons/log';
 
 export default function LogCard(props) {
+    function formatString(text) {
+        let date = text.split(" || ")[0];
+        let content = text.split(" || ")[1];
+        return [date, content]
+    }
+
     return (
         <View style={styles.outerContainer}>
             <View style={styles.cardIconContainer}>
                 <LogIcon />
             </View>
             <View style={styles.cardTextContainer}>
-                <Text style={styles.description}>{props.content || "07/06/2021 - 23:24 - Uma observação foi adicionada ao Pavimento 04"}</Text>
+                <Text style={styles.description}>{formatString(props.content)[1]}</Text>
+                <Text style={styles.date}>{formatString(props.content)[0]}</Text>
             </View>
         </View>
     );
@@ -46,5 +53,10 @@ const styles = StyleSheet.create({
     cardIconContainer: {
         width: '10%',
         alignSelf: 'center'
+    },
+    date: {
+        fontSize: 14,
+        color: 'gray',
+        fontStyle: 'italic'
     }
 });

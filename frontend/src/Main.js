@@ -1,12 +1,10 @@
 import React from 'react';
 import 'react-native-gesture-handler';
-import { StyleSheet, StatusBar, Image } from 'react-native';
+import { StatusBar, Image } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { LinearGradient } from 'expo-linear-gradient';
-// import { setCustomText } from 'react-native-global-props';
 
 /** PÁGINAS */
 import InitialPage from './views/InitialPage';
@@ -21,17 +19,10 @@ import CommentsView from './views/CommentsView';
 import ResolvedComments from './views/ResolvedComments';
 
 
-const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
-// const customTextProps = {
-//     style: {
-//         fontFamily: 'OpenSans-Regular'
-//     }
-// }
-
-// setCustomText(customTextProps);
 
 export default function Main(props) {
+
     return (
         <NavigationContainer>
             <Stack.Navigator initialRouteName="InitialPage">

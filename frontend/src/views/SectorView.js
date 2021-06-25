@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import client from '../../client';
@@ -11,10 +11,12 @@ import SubHeader from '../components/SubHeader';
 import SectionTitle from '../components/SectionTitle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SendIcon from '../icons/send-arrow';
+import QRCode from '../icons/qr-code-header';
 
 export default function GeneralView({ route }) {
     const [loading, setLoading] = useState(true);
     const [logLoading, setLogLoading] = useState(true);
+    const [sendLoading, setSendLoading] = useState(false);
     const [obraTitle, setObraTitle] = useState(null);
     const [obraAddress, setObraAddress] = useState(null);
     const [response, setResponse] = useState(null);
@@ -29,6 +31,18 @@ export default function GeneralView({ route }) {
     const [userName, setUserName] = useState(null);
     const [userOccupation, setUserOccupation] = useState(null);
     const [fullData, setFullData] = useState(null);
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('QR Code Scanner')}
+                    style={{paddingRight: 15}}>
+                    <QRCode width={30} height={30} />
+                </TouchableOpacity>
+            )
+        });
+    }, [navigation]);
     
     useEffect(() => {
         navigation.addListener('focus', () => {
@@ -67,6 +81,7 @@ export default function GeneralView({ route }) {
     // Envia observação para o firebase
     function submitNewNote(isAlert) {
         if (isAlert !== null) {
+            setSendLoading(true);
             let newNote = {
                 "alerta": isAlert,
                 "assunto": textInput,
@@ -80,9 +95,12 @@ export default function GeneralView({ route }) {
                     newNote = {...newNote, dataCriacao: message.date, key: message.key}
                     setLog([...log, newNote]);
                     setTextInput('');
-                    // navigation.navigate('SectorView', {"tipoObra": route.params?.tipoObra, "keyRef": route.params?.keyRef})
+                    setSendLoading(false);
                 },
-                () => setLoading(false),
+                () => {
+                    setLoading(false);
+                    setSendLoading(false);
+                },
                 () => setLoading(false)
             );
         } 
@@ -110,7 +128,7 @@ export default function GeneralView({ route }) {
             setLog(body);
             setLogLoading(false);
         },
-        (message) => console.log(message), 
+        (message) => {null}, 
         () => setLoading(false), 
         () => setLoading(false)
         );
@@ -144,10 +162,10 @@ export default function GeneralView({ route }) {
         return await AsyncStorage
             .setItem('keyObra', route.params?.obra || fullData.obra)
             .then((value) => {
-                console.log(value);
+                null
             })
             .catch((e) => {
-                console.log(e.message);
+                null;
             })
     }
 
@@ -223,11 +241,16 @@ export default function GeneralView({ route }) {
                             }}
                             value={textInput}
                         />
-                        <TouchableOpacity 
-                            style={styles.inputButton}
-                            onPress={verifyAlert}>
-                            <SendIcon width={40} height={40} />
-                        </TouchableOpacity>
+                        {
+                            sendLoading ? (<ActivityIndicator size='large' color='#2385A2' />)
+                            : (
+                                <TouchableOpacity 
+                                    style={styles.inputButton}
+                                    onPress={verifyAlert}>
+                                    <SendIcon width={40} height={40} />
+                                </TouchableOpacity>
+                            )
+                        }
                     </View>
                 </View>
             

@@ -1,27 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, StatusBar, TextInput, ActivityIndicator } from 'react-native';
 import ConnectLogo from '../icons/connectdata-logo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 
 export default function Login() {
-    const [name, setName] = useState(null);
-    const [role, setRole] = useState(null);
-    const [password, setPassword] = useState(null);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState(null);
     const navigation = useNavigation();
 
+    useEffect(() => {
+        async function setKeyObra() {
+            await AsyncStorage
+                .setItem('keyObra', '3US5gOR3utWe5NYe9YL6')
+                .then(() => null)
+                .catch(() => null);
+        }
+        setKeyObra();
+    }, [])
+
     async function handleLogin() {
         setMessage(null);
         setLoading(true);
-        if (!!name && !!role && !!password) {
+        if (email == 'hashimoto@connectdata.com' && password == 'insper2021') {
             await AsyncStorage
-                .setItem('userName', name)
+                .setItem('userName', 'Marcelo Hashimoto')
                 .then(async() => {
                     await AsyncStorage
-                        .setItem('userOccupation', role)
+                        .setItem('userOccupation', 'Empreiteiro')
                         .then(() => {
+                            setEmail('');
+                            setPassword('');
                             navigation.navigate('InitialPage');
                             setLoading(false);
                         })
@@ -35,8 +46,12 @@ export default function Login() {
                     setMessage("Ocorreu algum erro. Por favor, tente novamente")
                 })
         }
-        else {
+        else if (email == '' || password == '') {
             setMessage("Você deve preencher todos os campos");
+            setLoading(false);
+        }
+        else {
+            setMessage("Dados incorretos. Verifique suas informações e tente novamente.");
             setLoading(false);
         }
     }
@@ -48,34 +63,33 @@ export default function Login() {
             </View>
             <View style={styles.inputsContainer}>
                 <TextInput 
-                    placeholder="Digite seu nome" 
+                    placeholder="Digite seu email" 
                     style={styles.textInput} 
-                    onChangeText={(text) => setName(text)} />
-                <TextInput 
-                    placeholder="Digite seu cargo" 
-                    style={styles.textInput} 
-                    onChangeText={(text) => setRole(text)} />
+                    onChangeText={(text) => setEmail(text)} 
+                    value={email} />
                 <TextInput 
                     secureTextEntry={true} 
                     placeholder="Digite sua senha" 
                     style={styles.textInput} 
-                    onChangeText={(text) => setPassword(text)} />
+                    onChangeText={(text) => setPassword(text)} 
+                    value={password} />
             </View>
             {
                 message ? 
-                (<View style={{marginTop: 5}}><Text style={{fontSize: 16, color: 'red', alignSelf: 'center'}}>{message}</Text></View>)
+                (<View style={{marginTop: 5}}><Text style={{fontSize: 16, color: 'red', alignSelf: 'center', textAlign: 'center'}}>{message}</Text></View>)
                 :
                 null
             }
-            <TouchableOpacity 
-                style={styles.submitButton}
-                onPress={handleLogin}>
-                {
-                    loading ? <Text style={styles.submitButtonText}>Carregando...</Text>
-                    :
-                    <Text style={styles.submitButtonText}>Entrar</Text>
-                }
-            </TouchableOpacity>
+            {
+                loading ? (<ActivityIndicator style={{alignSelf: 'center'}} size='large' color='#2385A2' />)
+                : (
+                    <TouchableOpacity 
+                        style={styles.submitButton}
+                        onPress={handleLogin}>
+                            <Text style={styles.submitButtonText}>Entrar</Text>
+                    </TouchableOpacity>
+                )
+            }
         </View>
     );
 }

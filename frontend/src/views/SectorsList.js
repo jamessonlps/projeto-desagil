@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { ScrollView, Text, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
+import { ScrollView, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import client from '../../client';
 import { useGlobal } from '../../store';
 import NavigateButton from '../components/NavigateButton';
 import SectionTitle from '../components/SectionTitle';
+import QRCode from '../icons/qr-code-header';
 
 export default function SectorsList({ route }) {
     const navigation = useNavigation();
@@ -14,6 +15,18 @@ export default function SectorsList({ route }) {
     const [sectorsLoading, setSectorsLoading] = useState(true);
     const localhost = useGlobal('localhost');
     const address = localhost.address;
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('QR Code Scanner')}
+                    style={{paddingRight: 15}}>
+                    <QRCode width={30} height={30} />
+                </TouchableOpacity>
+            )
+        });
+    }, [navigation]);
 
     useEffect(() => {
         setLoading(true);

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, ScrollView, Alert } from 'react-native';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, ScrollView, Alert, StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import client from '../../client';
 import CommentCard from '../components/CommentCard';
@@ -12,6 +12,7 @@ import NavigateButton from '../components/NavigateButton';
 import SubHeader from '../components/SubHeader';
 import SectionTitle from '../components/SectionTitle';
 import SendIcon from '../icons/send-arrow';
+import QRCode from '../icons/qr-code-header';
 
 export default function GeneralView({ route }) {
     const [loading, setLoading] = useState(true);
@@ -24,10 +25,24 @@ export default function GeneralView({ route }) {
     const [userName, setUserName] = useState(null);
     const [userOccupation, setUserOccupation] = useState(null);
     const [fullData, setFullData] = useState(null);
+    const [sendLoading, setSendLoading] = useState(false);
     const navigation = useNavigation();
     const localhost = useGlobal('localhost');
     const address = localhost.address;
     const [log, setLog] = useState(null);
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('QR Code Scanner')}
+                    style={{paddingRight: 15}}>
+                    <QRCode width={30} height={30} />
+                </TouchableOpacity>
+            )
+        });
+    }, [navigation]);
+
     
     useEffect(() => {
         navigation.addListener('focus', () => {
@@ -59,19 +74,20 @@ export default function GeneralView({ route }) {
                         submitNewNote(true);
                     }}
                 ]
-            )
+                )
+            }
         }
-    }
-
-
-    // Envia observação para o firebase
-    function submitNewNote(isAlert) {
-        let newNote = {
-            "alerta": isAlert,
-            "assunto": textInput,
-            "autor": userName,
-            "cargo": userOccupation
-        }
+        
+        
+        // Envia observação para o firebase
+        function submitNewNote(isAlert) {
+            setSendLoading(true);
+            let newNote = {
+                "alerta": isAlert,
+                "assunto": textInput,
+                "autor": userName,
+                "cargo": userOccupation
+            }
         client.post(
             `${address}/observacao?obra=${route.params?.obra}&${route.params?.tipoObra}=${route.params?.key}`,
             newNote,
@@ -79,9 +95,12 @@ export default function GeneralView({ route }) {
                 newNote = {...newNote, dataCriacao: message.date, key: message.key}
                 setLog([...log, newNote]);
                 setTextInput('');
-                // navigation.navigate('GeneralView', {"tipoObra": route.params?.tipoObra, "keyRef": route.params?.keyRef})
+                setSendLoading(false);
             },
-            () => setLoading(false),
+            () => {
+                setLoading(false);
+                setSendLoading(false);
+            },
             () => setLoading(false)
         );
     }
@@ -110,7 +129,7 @@ export default function GeneralView({ route }) {
             setLog(body);
             setLogLoading(false);
         },
-        (message) => console.log(message), 
+        (message) => {null}, 
         () => setLoading(false), 
         () => setLoading(false)
         );
@@ -143,12 +162,8 @@ export default function GeneralView({ route }) {
     async function setKeyObra() {
         return await AsyncStorage
             .setItem('keyObra', route.params?.obra || fullData.obra)
-            .then((value) => {
-                console.log(value);
-            })
-            .catch((e) => {
-                console.log(e.message);
-            })
+            .then((value) => {null})
+            .catch((e) => {null})
     }
 
 
@@ -163,7 +178,6 @@ export default function GeneralView({ route }) {
                 responsavel={fullData.responsavel} 
                 endereco={obraAddress}
             />
-
 
             <View style={styles.contentContainer}>
                 {/* =============== DOCUMENTOS ================= */}
@@ -234,11 +248,16 @@ export default function GeneralView({ route }) {
                             }}
                             value={textInput}
                         />
-                        <TouchableOpacity 
-                            style={styles.inputButton}
-                            onPress={verifyAlert}>
-                            <SendIcon width={40} height={40} />
-                        </TouchableOpacity>
+                        {
+                            sendLoading ? (<ActivityIndicator size='large' color='#2385A2' />)
+                            : (
+                                <TouchableOpacity 
+                                    style={styles.inputButton}
+                                    onPress={verifyAlert}>
+                                    <SendIcon width={40} height={40} />
+                                </TouchableOpacity>
+                            )
+                        }
                     </View>
                 </View>
 

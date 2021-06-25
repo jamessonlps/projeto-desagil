@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import AppLoading from 'expo-app-loading';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useGlobal } from '../../store';
 import client from '../../client';
 import LogCard from '../components/LogCard';
+import SubHeader from '../components/SubHeader';
 
-import { useFonts } from '@expo-google-fonts/open-sans';
 import QRCodeIcon from '../icons/qr-code';
 
 export default function InitialPage() {
@@ -19,7 +18,6 @@ export default function InitialPage() {
     const navigation = useNavigation();
     const localhost = useGlobal('localhost');
     const address = localhost.address;
-    // let [fontsLoaded] = useFonts({ 'Open Sans': require('../assets/fonts/OpenSans-Bold.ttf') });
 
     useEffect(() => {
         getLastObra();
@@ -42,51 +40,61 @@ export default function InitialPage() {
             .then((value) => {
                 setKeyObra(value);
             })
-            .catch((e) => {
-                console.log(e.message);
-            })
+            .catch((e) => {null})
     }
 
-    return (
-        <>
-            <ScrollView style={styles.container}>
-                <Text style={styles.logTitle}>Registros da última obra</Text>
-                <View style={styles.lineStyle} />
-                {
-                    loadingObra ? (<ActivityIndicator size='large' color="#2385A2" />)
-                    : !loadingObra && dataObra !== null && dataObra !== undefined && keyObra !== null ?
-                    dataObra.logs.reverse().map((item, index) => 
-                        <View style={{marginHorizontal: 5}} key={index}> 
-                            <LogCard content={item}/> 
-                        </View>)
-                    : (<Text style={{alignSelf: 'center', color: 'gray'}}>Não há conteúdo a ser exibido</Text>)
-                }
-            </ScrollView>
-            <View style={styles.containerText}>
-                <TouchableOpacity
-                    style={styles.qrbutton} 
-                    onPress={() => navigation.navigate('QR Code Scanner')}
-                >
-                    <QRCodeIcon width={96} height={96} />
-                </TouchableOpacity>
+    if (!dataObra) {
+        return (
+            <View style={{flex: 1, alignContent: 'center', justifyContent: 'center'}}>
+                <ActivityIndicator size='large' color="#2385A2" />
             </View>
+        )
+    }
+    else {
+        return (
+            <>
+                <ScrollView style={styles.container}>
+                    <SubHeader 
+                        responsavel={dataObra.responsavel} 
+                        titulo={dataObra.titulo} 
+                        endereco={dataObra.endereco} 
+                    />
+    
+                    <Text style={styles.logTitle}>Registros da última obra</Text>
+                    <View style={styles.lineStyle} />
+                    {
+                        loadingObra ? (<ActivityIndicator size='large' color="#2385A2" />)
+                        : !loadingObra && dataObra !== null && dataObra !== undefined && keyObra !== null ?
+                        dataObra.logs.reverse().map((item, index) => 
+                            <View style={{marginHorizontal: 5, paddingHorizontal: 15}} key={index}> 
+                                <LogCard content={item}/> 
+                            </View>)
+                        : (<Text style={{alignSelf: 'center', color: 'gray'}}>Não há conteúdo a ser exibido</Text>)
+                    }
+                </ScrollView>
+                <View style={styles.containerText}>
+                    <TouchableOpacity
+                        style={styles.qrbutton} 
+                        onPress={() => navigation.navigate('QR Code Scanner')}
+                    >
+                        <QRCodeIcon width={96} height={96} />
+                    </TouchableOpacity>
+                </View>
+    
+            </>
+        );
+    }
 
-        </>
-    );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         display: 'flex',
-        flexDirection: 'column',
-        padding: 15,
-        paddingBottom: 150
+        flexDirection: 'column'
     },
     containerText: {
         flex: 1,
-        // alignContent: 'center',
-        // justifyContent: 'center',
         position: 'absolute',
         bottom: '5%',
         alignSelf: 'center'
@@ -95,10 +103,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         alignSelf: 'center',
-        // borderColor: 'red',
         width: 70,
         height: 70,
-        // borderWidth: 3,
         borderRadius: 100,
         backgroundColor: '#ffffff',
         shadowColor: "#000",
@@ -113,13 +119,15 @@ const styles = StyleSheet.create({
     logTitle: {
         color: '#2D2A9B',
         fontSize: 20,
-        // fontWeight: 'bold',
-        // fontFamily: 'Open Sans'
+        fontWeight: 'bold',
+        paddingTop: 15,
+        paddingHorizontal: 15
     },
     lineStyle: {
         borderWidth: 0.3,
         borderColor:'#2D2A9B',
         marginBottom: 10,
-        marginTop: 5
+        marginTop: 5,
+        marginHorizontal: 15
     }
 })
