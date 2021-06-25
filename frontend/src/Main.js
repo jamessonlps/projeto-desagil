@@ -25,7 +25,7 @@ export default function Main(props) {
 
     return (
         <NavigationContainer>
-            <Stack.Navigator initialRouteName="InitialPage">
+            <Stack.Navigator initialRouteName="Login">
                 <Stack.Screen 
                     component={Login}
                     name="Login"

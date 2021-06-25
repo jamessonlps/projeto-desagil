@@ -65,10 +65,11 @@ export default function InitialPage() {
                     {
                         loadingObra ? (<ActivityIndicator size='large' color="#2385A2" />)
                         : !loadingObra && dataObra !== null && dataObra !== undefined && keyObra !== null ?
-                        dataObra.logs.reverse().map((item, index) => 
+                        dataObra.logs.reverse().map((item, index) => (
                             <View style={{marginHorizontal: 5, paddingHorizontal: 15}} key={index}> 
                                 <LogCard content={item}/> 
                             </View>)
+                        )
                         : (<Text style={{alignSelf: 'center', color: 'gray'}}>Não há conteúdo a ser exibido</Text>)
                     }
                 </ScrollView>
