@@ -1,18 +1,29 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import LogIcon from '../icons/log';
+import AlertIcon from '../icons/warning';
 
 export default function LogCard(props) {
     function formatString(text) {
         let date = text.split(" || ")[0];
         let content = text.split(" || ")[1];
-        return [date, content]
+        let type;
+        try {
+            type = content.split(" ")[1];
+        }
+        catch {
+            type = "observação"
+        }
+        return [date, content, type]
     }
 
     return (
         <View style={styles.outerContainer}>
             <View style={styles.cardIconContainer}>
-                <LogIcon />
+                {
+                    formatString(props.content)[2] == "alerta" ? (<AlertIcon width={30} height={30} />)
+                    : (<LogIcon />)
+                }
             </View>
             <View style={styles.cardTextContainer}>
                 <Text style={styles.description}>{formatString(props.content)[1]}</Text>

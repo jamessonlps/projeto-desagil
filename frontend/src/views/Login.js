@@ -14,7 +14,7 @@ export default function Login() {
     useEffect(() => {
         async function setKeyObra() {
             await AsyncStorage
-                .setItem('keyObra', '3US5gOR3utWe5NYe9YL6')
+                .setItem('keyObra', 'QM6XcByNOFbHhnYShhgd')
                 .then(() => null)
                 .catch(() => null);
         }
