@@ -39,7 +39,7 @@ export default function QRCodeScanner() {
         client.get(`${address}/${readingType}?key=${target}`, (body) => {
             Alert.alert(
                 `${body.titulo}`,
-                `Responsável: ${body.responsavel}`,
+                `Responsável: ${body.responsavel || "Não especificado"}`,
                 [
                     {text: "Cancelar", style: "cancel"}, 
                     {text: "Ver mais", onPress: () => {

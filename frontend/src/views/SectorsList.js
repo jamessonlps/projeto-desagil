@@ -46,7 +46,7 @@ export default function SectorsList({ route }) {
             {
                 sectorsLoading && sectors !== null ? (<ActivityIndicator size='large' color="#2385A2" />)
                 : !sectorsLoading && sectors !== null ? 
-                sectors.map((item, index) => (
+                sectors.reverse().map((item, index) => (
                     <NavigateButton 
                         key={index}
                         destino={"SectorView"}

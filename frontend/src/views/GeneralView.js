@@ -93,7 +93,14 @@ export default function GeneralView({ route }) {
             newNote,
             (message) => {
                 newNote = {...newNote, dataCriacao: message.date, key: message.key}
-                setLog([...log, newNote]);
+                if (log) {
+                    setLog([...log, newNote]);
+                }
+                else {
+                    setLog([newNote]);
+                }
+                setLogLoading(false);
+                setLoading(false);
                 setTextInput('');
                 setSendLoading(false);
             },
