@@ -1,20 +1,30 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { formatData } from '../utils/FormatDate';
+import { useNavigation } from '@react-navigation/native';
 
 import Warning from '../icons/warning';
+import Next from '../icons/next';
 
 export default function AlertCard(props) {
+    const navigation = useNavigation();
+
     return (
-        <View style={styles.cardContainer}>
-            <View style={styles.cardAlertIconContainer}>
-                <Warning />
+        <TouchableOpacity 
+            onPress={() => navigation.navigate(props.destino, props.dados)}>
+            <View style={styles.cardContainer}>
+                <View style={styles.cardAlertIconContainer}>
+                    <Warning />
+                </View>
+                <View style={styles.cardTextContainer}>
+                    <Text numberOfLines={1} style={styles.cardDescription}>{props.assunto}</Text>
+                    <Text style={styles.cardDate}>{formatData(props.dataCriacao)}</Text>
+                </View>
+                <View style={styles.cardArrowContainer}>
+                    <Next width={12} height={12} color='#2385A2' />
+                </View>
             </View>
-            <View style={styles.cardTextContainer}>
-                <Text style={styles.cardDescription}>{props.texto}</Text>
-                <Text style={styles.cardDate}>{formatData(props.dataCriacao)}</Text>
-            </View>
-        </View>
+        </TouchableOpacity>
     );
 }
 
@@ -38,13 +48,17 @@ const styles = StyleSheet.create({
     cardTextContainer: {
         display: 'flex',
         flexDirection: 'column',
-        width: '90%',
+        width: '86%',
         paddingLeft: 5
     },
     cardAlertIconContainer: {
         alignSelf: 'center',
         justifyContent: 'center',
         width: '10%'
+    },
+    cardArrowContainer: {
+        width: '4%',
+        alignSelf: 'center'
     },
     cardDescription: {
         fontSize: 16,

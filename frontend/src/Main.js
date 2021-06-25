@@ -16,6 +16,9 @@ import GeneralView from './views/GeneralView';
 import SectorView from './views/SectorView';
 import DocumentsList from './views/DocumentsList';
 import SectorsList from './views/SectorsList';
+import Login from './views/Login';
+import CommentsView from './views/CommentsView';
+import ResolvedComments from './views/ResolvedComments';
 
 
 const Tab = createBottomTabNavigator();
@@ -31,14 +34,22 @@ const Stack = createStackNavigator();
 export default function Main(props) {
     return (
         <NavigationContainer>
-            <Stack.Navigator initialRouteName="Home">
+            <Stack.Navigator initialRouteName="InitialPage">
+                <Stack.Screen 
+                    component={Login}
+                    name="Login"
+                    options={{
+                        headerShown: false
+                    }}>
+                </Stack.Screen>
                 <Stack.Screen 
                     component={InitialPage}
-                    name="Home"
+                    name="InitialPage"
                     options={{
                         headerTitle: null,
                         headerTitleAlign: 'center',
                         headerBackground: backgroundConnect,
+                        headerTintColor: '#fff',
                         headerTitleStyle: {
                             color: "#fff"
                         }
@@ -76,6 +87,24 @@ export default function Main(props) {
                 <Stack.Screen 
                     name="SectorView"
                     component={SectorView}
+                    options={{
+                        title: null,
+                        headerBackground: backgroundConnect,
+                        headerTintColor: "#fff"
+                    }}
+                />
+                <Stack.Screen 
+                    name="CommentsView"
+                    component={CommentsView}
+                    options={{
+                        title: null,
+                        headerBackground: backgroundConnect,
+                        headerTintColor: "#fff"
+                    }}
+                />
+                <Stack.Screen 
+                    name="ResolvedComments"
+                    component={ResolvedComments}
                     options={{
                         title: null,
                         headerBackground: backgroundConnect,

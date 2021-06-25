@@ -43,7 +43,7 @@ export default function QRCodeScanner() {
                 [
                     {text: "Cancelar", style: "cancel"}, 
                     {text: "Ver mais", onPress: () => {
-                        navigation.navigate(path, {...body, tipoObra: readingType});
+                        navigation.navigate(path, {...body, tipoObra: readingType, keyRef: target});
                     }}
                 ]
             )
