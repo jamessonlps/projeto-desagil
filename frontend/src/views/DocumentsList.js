@@ -5,6 +5,7 @@ import client from '../../client';
 import { useGlobal } from '../../store';
 import NavigateButton from '../components/NavigateButton';
 import SectionTitle from '../components/SectionTitle';
+import { formatData } from '../utils/FormatDate';
 
 export default function DocumentsList({ route }) {
     const navigation = useNavigation();
@@ -28,7 +29,7 @@ export default function DocumentsList({ route }) {
     }, []);
 
     return (
-        <ScrollView >
+        <ScrollView style={{paddingHorizontal: 10}} >
             <SectionTitle titleSection="Documentos" />
             {
                 docsLoading && docs !== null ? (<ActivityIndicator size='large' color="#2385A2" />)
@@ -40,7 +41,7 @@ export default function DocumentsList({ route }) {
                         dados={item}
                         titulo={item.titulo}
                         detalhes={item.descricao}
-                        dataCriacao={item.dataCriacao}
+                        dataCriacao={formatData(item.dataCriacao)}
                     />
                 ))
                 : <Text style={{alignSelf: 'center', color: 'gray'}}>Não há conteúdo a ser exibido</Text>

@@ -10,6 +10,7 @@ import NavigateButton from '../components/NavigateButton';
 import SubHeader from '../components/SubHeader';
 import SectionTitle from '../components/SectionTitle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import SendIcon from '../icons/send-arrow';
 
 export default function GeneralView({ route }) {
     const [loading, setLoading] = useState(true);
@@ -66,18 +67,20 @@ export default function GeneralView({ route }) {
     // Envia observação para o firebase
     function submitNewNote(isAlert) {
         if (isAlert !== null) {
+            let newNote = {
+                "alerta": isAlert,
+                "assunto": textInput,
+                "autor": userName,
+                "cargo": userOccupation
+            }
             client.post(
                 `${address}/observacao?obra=${route.params?.obra}&setor=${route.params?.key || route.params?.keyRef}`,
-                {
-                    "alerta": isAlert,
-                    "assunto": textInput,
-                    "autor": userName,
-                    "cargo": userOccupation
-                },
+                newNote,
                 (message) => {
-                    setResponse(message);
-                    setRefresh(true);
+                    newNote = {...newNote, dataCriacao: message.date, key: message.key}
+                    setLog([...log, newNote]);
                     setTextInput('');
+                    // navigation.navigate('SectorView', {"tipoObra": route.params?.tipoObra, "keyRef": route.params?.keyRef})
                 },
                 () => setLoading(false),
                 () => setLoading(false)
@@ -157,6 +160,7 @@ export default function GeneralView({ route }) {
             <SubHeader
                 titulo={fullData.titulo}
                 responsavel={fullData.responsavel} 
+                endereco={obraAddress}
             />
 
             <View style={styles.contentContainer}>
@@ -180,7 +184,7 @@ export default function GeneralView({ route }) {
                             <AlertCard 
                                 assunto={item.assunto}
                                 dataCriacao={item.dataCriacao}
-                                dados={{...item, "tipoObra": route.params?.tipoObra, "keyRef": fullData.key}}
+                                dados={{...item, "tipoObra": route.params?.tipoObra, "keyRef": fullData.key, "titulo": fullData.titulo}}
                                 destino={"CommentsView"}
                             />
                         </View>
@@ -191,46 +195,44 @@ export default function GeneralView({ route }) {
 
                 {/* =============== OBSERVAÇÕES ================= */}
                 <SectionTitle titleSection="Observações" />
-                {
-                    logLoading && log !== null ? (<ActivityIndicator size='large' color="#2385A2" />)
-                    : !logLoading && log.length > 0 ? 
-                    log.map((item, index) => !item.alerta && !item.resolvido ? (
-                        <View key={index}>
-                            <CommentCard 
-                                assunto={item.assunto}
-                                dataCriacao={item.dataCriacao}
-                                dados={{...item, "tipoObra": route.params?.tipoObra, "keyRef": fullData.key}}
-                                destino={"CommentsView"}
-                            />
-                        </View>
-                    ) : null)
-                    : <Text style={{alignSelf: 'center', color: 'gray'}}>Não há conteúdo a ser exibido</Text>
-                }
-
-            </View>
-
-            {/* =============== INPUT NOVA OBSERVAÇÃO / ALERTA ================= */}
-            <View style={styles.inputContainer}>
-                <Text style={styles.inputTitle} > Adicionar observação ou alerta</Text>
-                <TextInput 
-                    style={styles.inputArea} 
-                    placeholder="Clique aqui para inserir um novo comentário..." 
-                    selectionColor='#2385A2'
-                    onChangeText={(text) => {
-                        setTextInput(text)
-                    }}
-                    value={textInput}
-                />
-                <TouchableOpacity 
-                    style={styles.inputButton}
-                    onPress={verifyAlert}>
-                    <Text style={{color: 'white', fontSize: 18}}>Enviar</Text>
-                </TouchableOpacity>
-            </View>
-
-
-            {/* =============== OBSERVAÇÕES RESOLVIDAS ================= */}
-            <SectionTitle titleSection="Observações resolvidas" />
+                <View style={styles.obsContainer}>
+                    {
+                        logLoading && log !== null ? (<ActivityIndicator size='large' color="#2385A2" />)
+                        : !logLoading && log.length > 0 ? 
+                        log.map((item, index) => !item.alerta && !item.resolvido ? (
+                            <View style={{marginHorizontal: 10}} key={index}>
+                                <CommentCard 
+                                    assunto={item.assunto}
+                                    dataCriacao={item.dataCriacao}
+                                    dados={{...item, "tipoObra": route.params?.tipoObra, "keyRef": fullData.key, "titulo": fullData.titulo}}
+                                    destino={"CommentsView"}
+                                />
+                            </View>
+                        ) : null)
+                        : <Text style={{alignSelf: 'center', color: 'gray'}}>Não há conteúdo a ser exibido</Text>
+                    }
+                    {/* =============== INPUT NOVA OBSERVAÇÃO / ALERTA ================= */}
+                    <Text style={styles.inputTitle} > Adicionar observação ou alerta</Text>
+                    <View style={styles.inputContainer}>
+                        <TextInput 
+                            style={styles.inputArea} 
+                            placeholder="Digite aqui sua observação..." 
+                            selectionColor='#2385A2'
+                            onChangeText={(text) => {
+                                setTextInput(text)
+                            }}
+                            value={textInput}
+                        />
+                        <TouchableOpacity 
+                            style={styles.inputButton}
+                            onPress={verifyAlert}>
+                            <SendIcon width={40} height={40} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            
+                {/* =============== OBSERVAÇÕES RESOLVIDAS ================= */}
+                <SectionTitle titleSection="Observações resolvidas" />
                 {
                     logLoading && log !== null ? (<ActivityIndicator size='large' color="#2385A2" />)
                     : !logLoading && log !== null ? 
@@ -239,13 +241,16 @@ export default function GeneralView({ route }) {
                             <CommentCard 
                                 assunto={item.assunto}
                                 dataCriacao={item.dataCriacao}
-                                dados={{...item, "tipoObra": route.params?.tipoObra, "keyRef": fullData.key}}
+                                dados={{...item, "tipoObra": route.params?.tipoObra, "keyRef": fullData.key, "titulo": fullData.titulo}}
                                 destino={"ResolvedComments"}
-                                />
+                                color={"gray"}
+                            />
                         </View>
                     ) : null)
                     : <Text style={{alignSelf: 'center', color: 'gray'}}>Não há conteúdo a ser exibido</Text>
                 }
+            
+            </View>
         </ScrollView>
     );
     }
@@ -263,31 +268,19 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         display: 'flex',
-        flexDirection: 'column',
-        padding: 10,
-        marginBottom: 15,
-        marginTop: 15,
-        marginLeft: 10,
-        marginRight: 10,
-        backgroundColor: '#ffffff',
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowOpacity: 0.20,
-        shadowRadius: 1.41,
-        elevation: 2,
-        borderRadius: 5
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: 15
     },
     inputButton: {
-        backgroundColor: "#2385A2",
+        // backgroundColor: "#2385A2",
         alignItems: 'center',
         alignSelf: 'center',
-        paddingHorizontal: 25,
-        paddingVertical: 6,
-        marginTop: 10,
-        borderRadius: 5,
+        justifyContent: 'center',
+        // paddingHorizontal: 25,
+        // paddingVertical: 6,
+        // marginTop: 10,
+        borderRadius: 100,
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
@@ -296,18 +289,36 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.20,
         shadowRadius: 1.41,
         elevation: 2,
+        // width: '10%'
     },
     inputArea: {
         borderRadius: 5,
         padding: 5,
-        backgroundColor: "#F1F2F2",
-        margin: 5
+        backgroundColor: "#f1f2f2",
+        // margin: 5,
+        width: '87%',
+        height: 40,
+        fontSize: 16
     },
     inputTitle: {
         fontSize: 18,
-        marginBottom: 5,
+        paddingTop: 15,
         color: "#2D2A9B",
         alignSelf: 'center',
         fontWeight: 'bold'
+    },
+    obsContainer: {
+        backgroundColor: '#fff', 
+        borderRadius: 5,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.20,
+        shadowRadius: 1.41,
+        elevation: 2,
+        paddingTop: 10,
+        marginHorizontal: 5
     }
 });

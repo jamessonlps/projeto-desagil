@@ -28,7 +28,7 @@ export default function SectorsList({ route }) {
     }, []);
 
     return (
-        <ScrollView >
+        <ScrollView style={{paddingHorizontal: 10}} >
             <SectionTitle titleSection="Setores do pavimento" />
             {
                 sectorsLoading && sectors !== null ? (<ActivityIndicator size='large' color="#2385A2" />)

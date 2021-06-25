@@ -14,7 +14,7 @@ export default function DocumentCard(props) {
                 <View style={styles.cardTextContainer}>
                     <Text style={styles.cardTitle}>{props.titulo || "Título temporário"}</Text>
                     {
-                        props.detalhes ? <Text style={styles.cardDescription}>{props.detalhes}</Text>
+                        props.detalhes ? <Text numberOfLines={2} style={styles.cardDescription}>{props.detalhes}</Text>
                         : null
                     }
                     {
@@ -28,7 +28,7 @@ export default function DocumentCard(props) {
                 </View>
 
                 <View style={styles.cardIconContainer}>
-                    <Next width={18} height={18} color='#2385A2' />
+                    <Next width={12} height={12} color='#2385A2' />
                 </View>
             </View>
         </TouchableOpacity>
@@ -58,10 +58,10 @@ const styles = StyleSheet.create({
     cardTextContainer: {
         display: 'flex',
         flexDirection: 'column',
-        width: '93%'
+        width: '95%'
     },
     cardIconContainer: {
-        width: '7%',
+        width: '5%',
         alignSelf: 'center'
     },
     cardTitle: {

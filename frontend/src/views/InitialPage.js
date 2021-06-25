@@ -54,8 +54,8 @@ export default function InitialPage() {
                 <View style={styles.lineStyle} />
                 {
                     loadingObra ? (<ActivityIndicator size='large' color="#2385A2" />)
-                    : !loadingObra && dataObra !== null ?
-                    dataObra.logs.map((item, index) => 
+                    : !loadingObra && dataObra !== null && dataObra !== undefined && keyObra !== null ?
+                    dataObra.logs.reverse().map((item, index) => 
                         <View style={{marginHorizontal: 5}} key={index}> 
                             <LogCard content={item}/> 
                         </View>)

@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, ActivityIndicator, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, View, Text, ActivityIndicator, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import client from '../../client';
 import { useGlobal } from '../../store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { formatData } from '../utils/FormatDate';
+import SendIcon from '../icons/send-arrow';
 
 export default function CommentsView({ route }) {
     const [commentInput, setCommentInput] = useState(null);
     const [loading, setLoading] = useState(true);
     const [userName, setUserName] = useState(null);
+    const [listComments, setListComments] = useState([]);
     const [dataNavigation, setDataNavigation] = useState(null);
     const [userOccupation, setUserOccupation] = useState(null);
     const localhost = useGlobal('localhost');
@@ -17,6 +20,7 @@ export default function CommentsView({ route }) {
 
     useEffect(() => {
         getUserSetup();
+        setListComments(route.params?.comentarios);
     }, [])
     
     async function getUserSetup() {
@@ -30,12 +34,17 @@ export default function CommentsView({ route }) {
     }
 
     function sendComment() {
-        let now = getDate();
-        let newComment = now + ` || ${userName} || ${userOccupation} || ${commentInput}`
-        let comments = [... route.params?.comentarios, newComment];
-        client.put(
-            `${address}/observacao?key=${route.params?.key}&${route.params?.tipoObra}=${route.params?.keyRef}&addComment=true&resolve=false`,
-            {
+        if (commentInput !== '' && commentInput !== undefined) {
+            let now = getDate();
+            let newComment = now + ` || ${userName} || ${userOccupation} || ${commentInput}`
+            let comments = [];
+            if (listComments) {
+                comments = [...listComments, newComment];
+            } else {
+                comments = [newComment];
+            }
+            let body = {
+    
                 "alerta": route.params?.alerta,
                 "assunto": route.params?.assunto,
                 "autor": route.params?.autor,
@@ -43,14 +52,25 @@ export default function CommentsView({ route }) {
                 "comentarios": comments,
                 "resolvido": route.params?.resolvido,
                 "key": route.params?.key
-            },
-            (message) => {
-                console.log(message);
-                redirect();
-            },
-            () => setLoading(false),
-            () => setLoading(false)
-        );
+            };
+            client.put(
+                `${address}/observacao?key=${route.params?.key}&${route.params?.tipoObra}=${route.params?.keyRef}&addComment=true&resolve=false`,
+                body,
+                (message) => {
+                    console.log(message);
+                    setListComments(comments);
+                    setCommentInput('');
+                    // redirect();
+                },
+                () => {
+                    setLoading(false);
+                    setCommentInput('');
+                },
+                () => {
+                    setLoading(false);
+                }
+            );
+        }
     }
 
     function resolveComment() {
@@ -61,7 +81,7 @@ export default function CommentsView({ route }) {
                 "assunto": route.params?.assunto,
                 "autor": route.params?.autor,
                 "cargo": route.params?.cargo,
-                "comentarios": route.params?.comentarios,
+                "comentarios": listComments,
                 "resolvido": true,
                 "key": route.params?.key
             },
@@ -82,15 +102,6 @@ export default function CommentsView({ route }) {
             navigateTarget = "SectorView";
         }
         navigation.navigate(navigateTarget, {"tipoObra": route.params?.tipoObra, "keyRef": route.params?.keyRef})
-    
-        // client.get(`${address}/${route.params?.tipoObra}?key=${route.params?.keyRef}`, 
-        // (body) => {
-        //     setDataNavigation({...body, "tipoObra": route.params?.tipoObra});
-        // }, 
-        // (message) => console.log(message), 
-        // () => setLoading(false), 
-        // () => setLoading(false)
-        // );
     }
 
     function getDate() {
@@ -103,63 +114,213 @@ export default function CommentsView({ route }) {
         return `${day}/${month}/${year} ${hour}:${minutes}`;
     }
 
+
+    function formatCommentCard(text) {
+        let date = text.split(" || ")[0];
+        let author = text.split(" || ")[1];
+        let cargo = text.split(" || ")[2];
+        let content = text.split(" || ")[3];
+        return [`${content}`, `${date} - ${author}, ${cargo}`]
+    }
+
     return (
-        <View style={styles.outerContainer}>
-            <View>
-                <Text>{route.params?.assunto}</Text>
-                <Text>Autor(a): {route.params?.autor}</Text>
-                <Text>Função: {route.params?.cargo}</Text>
-                <Text>Criado em: {route.params?.dataCriacao}</Text>
+        <>
+        <ScrollView style={styles.outerContainer}>
+            <View style={styles.mainCommentContainer}>
+                <Text style={styles.textTitulo}>{route.params?.titulo}</Text>
+                <Text style={styles.textAutor}>Aberta por: {route.params?.autor}, {route.params?.cargo}</Text>
+                <Text style={styles.textDate}>Criado em: {formatData(route.params?.dataCriacao)}</Text>
+                <View style={{marginLeft: 10}}>
+                    <Text style={styles.textStatus}>Status: {route.params?.resolvido ? "Resolvido" : "Pendente"}</Text>
+                    <Text style={styles.textStatus}>Relevância: {route.params?.alerta ? "Alta" : "Baixa"}</Text>
+                </View>
+                <Text style={styles.textAssunto}>{route.params?.assunto}</Text>
             </View>
 
             <View>
                 {
-                    route.params.comentarios !== undefined && route.params.comentarios !== null && route.params?.comentarios.length > 0 ?
-                    route.params?.comentarios.map((item, index) => (
-                        <Text key={index}>{item}</Text>
+                    listComments !== undefined && listComments !== null && listComments.length > 0 ?
+                    listComments.map((item, index) => (
+                        <View style={styles.commentCard} key={index}>
+                            <Text style={styles.commentCardText}>{formatCommentCard(item)[0]}</Text>
+                            <Text style={styles.commentTextBottom}>{formatCommentCard(item)[1]}</Text>
+                        </View>
                     ))
                     :
-                    <Text>Ainda não há respostas a essa observação</Text>
+                    <Text style={{alignSelf: 'center'}}>Ainda não há respostas a essa observação</Text>
                 }
             </View>
 
-            <View>
+            <View style={styles.resolvedButton}>
                 <TouchableOpacity 
                     style={styles.buttonSubmit} 
                     onPress={resolveComment}>
-                    <Text>Marcar como resolvido</Text>
+                    <Text style={styles.textResolvedButton}>Marcar como resolvido</Text>
                 </TouchableOpacity>
             </View>
+        </ScrollView>
 
-            <View>
-                <Text>Adicionar comentário</Text>
-                <TextInput 
-                    onChangeText={(text) => setCommentInput(text)} 
-                    style={styles.inputText} 
-                />
-                <TouchableOpacity 
-                    style={styles.buttonSubmit} 
-                    onPress={() => sendComment()}>
-                    <Text>Enviar</Text>
-                </TouchableOpacity>
-            </View>
+        <View style={styles.inputContainer}>
+            <TextInput 
+                style={styles.inputArea} 
+                placeholder="Digite aqui seu comentário..." 
+                selectionColor='#2385A2'
+                onChangeText={(text) => {
+                    setCommentInput(text)
+                }}
+                value={commentInput}
+            />
+            <TouchableOpacity 
+                style={styles.inputButton}
+                onPress={() => sendComment()}>
+                <SendIcon width={40} height={40} />
+            </TouchableOpacity>
         </View>
+        </>
     );
 }
 
 const styles = StyleSheet.create({
     outerContainer: {
         flex: 1,
-        backgroundColor: '#fff'
+        backgroundColor: '#F1F2F2',
+        display: 'flex',
+        flexDirection: 'column'
     },
-    inputText: {
-        backgroundColor: '#f1f2f2',
-        paddingVertical: 5
+    mainCommentContainer: {
+        backgroundColor: '#fff',
+        padding: 10,
+        margin: 10,
+        borderRadius: 5,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.20,
+        shadowRadius: 1.41,
+        elevation: 2,
+    },
+    textTitulo: {
+        fontSize: 22,
+        fontWeight: 'bold',
+        color: '#2D2A9B',
+        paddingVertical: 2
+    },
+    textAssunto: {
+        fontSize: 18,
+        marginTop: 10,
+        color: '#000',
+        paddingVertical: 1
+    },
+    textAutor: {
+        fontSize: 17,
+        color: '#5c5c5c',
+        paddingVertical: 1
+    },
+    textDate: {
+        fontSize: 17,
+        color: '#5c5c5c',
+        paddingVertical: 1
+    },
+    textStatus: {
+        color: '#2385A2',
+        fontWeight: 'bold',
+        fontSize: 16,
+        paddingVertical: 1
+    },
+    commentCard: {
+        padding: 10,
+        backgroundColor: '#18EEAB4C',
+        borderRadius: 10,
+        marginHorizontal: 10,
+        marginVertical: 5,
+        width: '85%',
+        display: 'flex',
+        flexDirection: 'column'
+    },
+    commentCardText: {
+        color: 'black',
+        fontSize: 16
+    },
+    commentTextBottom: {
+        alignSelf: 'flex-end',
+        color: 'gray',
+        fontSize: 13,
+        fontStyle: 'italic'
+    },
+    resolvedButton: {
+        alignSelf: 'center',
+        marginTop: 15
     },
     buttonSubmit: {
-        backgroundColor: 'orange',
+        backgroundColor: '#2385A2',
         alignSelf: 'center',
         paddingVertical: 10,
-        width: 200
+        margin: 3,
+        width: 240,
+        alignContent: 'center',
+        borderRadius: 10,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.20,
+        shadowRadius: 1.41,
+        elevation: 2,
+    },
+    textResolvedButton: {
+        alignSelf: 'center',
+        color: 'white',
+        fontSize: 18,
+        fontWeight: 'bold'
+    },
+    inputText: {
+        backgroundColor: '#fff',
+        paddingVertical: 5
+    },
+    // ESTILIZAÇÃO DO INPUT DE COMENTÁRIO
+    inputTitle: {
+        fontSize: 18,
+        paddingTop: 15,
+        color: "#2D2A9B",
+        alignSelf: 'center',
+        fontWeight: 'bold'
+    },
+    inputContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: 15,
+        backgroundColor: '#fff'
+    },
+    inputArea: {
+        borderRadius: 5,
+        padding: 5,
+        backgroundColor: "#f1f2f2",
+        // margin: 5,
+        width: '87%',
+        height: 40,
+        fontSize: 16
+    },
+    inputButton: {
+        // backgroundColor: "#2385A2",
+        alignItems: 'center',
+        alignSelf: 'center',
+        justifyContent: 'center',
+        // paddingHorizontal: 25,
+        // paddingVertical: 6,
+        // marginTop: 10,
+        borderRadius: 100,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.20,
+        shadowRadius: 1.41,
+        elevation: 2,
+        // width: '10%'
     }
 })

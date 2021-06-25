@@ -20,6 +20,7 @@ export default function SubHeader(props) {
             </View>
             <View style={styles.subTitleHeader}>
                 <Text style={styles.headerResponsavel}>Responsável: {props.responsavel}</Text>
+                <Text style={styles.headerResponsavel}>Endereço: {props.endereco}</Text>
             </View>
         </LinearGradient>
     );
