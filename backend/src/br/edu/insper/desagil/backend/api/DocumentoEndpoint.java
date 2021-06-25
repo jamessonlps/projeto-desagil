@@ -145,7 +145,7 @@ public class DocumentoEndpoint extends Endpoint<Documento> {
 			}
 			
 			log = new SimpleDateFormat("dd/MM/yyyy - HH:mm").format(date) 
-					+ " - Um documento foi adicionado ao "
+					+ " || Um documento foi adicionado ao "
 					+ titulo;
 			
 			ObraEndpoint obraEndpoint = new ObraEndpoint();

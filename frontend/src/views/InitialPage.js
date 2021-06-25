@@ -57,7 +57,7 @@ export default function InitialPage() {
                     <SubHeader 
                         responsavel={dataObra.responsavel} 
                         titulo={dataObra.titulo} 
-                        endereco={dataObra.endereco} 
+                        endereco={dataObra.endereco}
                     />
     
                     <Text style={styles.logTitle}>Registros da última obra</Text>

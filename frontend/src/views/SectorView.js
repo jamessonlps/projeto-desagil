@@ -186,6 +186,7 @@ export default function GeneralView({ route }) {
                 titulo={fullData.titulo}
                 responsavel={fullData.responsavel} 
                 endereco={obraAddress}
+                obra={obraTitle}
             />
 
             <View style={styles.contentContainer}>

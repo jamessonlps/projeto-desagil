@@ -15,7 +15,7 @@ export default function SubHeader(props) {
                 </View>
                 <View style={{width: '85%'}}>
                     <Text numberOfLines={1} style={styles.headerTitle}>{props.titulo}</Text>
-                    <Text numberOfLines={1} style={styles.headerSubTitle}>{props.obra || "Prédio Pituba - Condomínio Alvorada"}</Text>
+                    <Text numberOfLines={1} style={styles.headerSubTitle}>{props.obra}</Text>
                 </View>
             </View>
             <View style={styles.subTitleHeader}>
