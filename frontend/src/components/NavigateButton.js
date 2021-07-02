@@ -1,18 +1,28 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useFonts } from 'expo-font';
 
 import Next from '../icons/next';
 
 export default function DocumentCard(props) {
     const navigation = useNavigation();
+    let [fontsLoaded] = useFonts({
+        'Regular': require('../../assets/fonts/OpenSans-Regular.ttf'),
+        'Bold': require('../../assets/fonts/OpenSans-Bold.ttf'),
+        'SemiBold': require('../../assets/fonts/OpenSans-SemiBold.ttf'),
+        'ExtraBold': require('../../assets/fonts/OpenSans-ExtraBold.ttf'),
+        'Italic': require('../../assets/fonts/OpenSans-Italic.ttf'),
+        'Light': require('../../assets/fonts/OpenSans-Light.ttf'),
+    });
 
     return (
         <TouchableOpacity
-            onPress={() => navigation.navigate(props.destino, props.dados)}>
-            <View style={styles.cardContainer}>
+            onPress={() => navigation.navigate(props.destino, props.dados)}
+            style={styles.cardContainer}> 
+            <View style={styles.pseudoCardContainer}>
                 <View style={styles.cardTextContainer}>
-                    <Text style={styles.cardTitle}>{props.titulo || "Título temporário"}</Text>
+                    <Text style={styles.cardTitle}>{props.titulo}</Text>
                     {
                         props.detalhes ? <Text numberOfLines={2} style={styles.cardDescription}>{props.detalhes}</Text>
                         : null
@@ -28,7 +38,7 @@ export default function DocumentCard(props) {
                 </View>
 
                 <View style={styles.cardIconContainer}>
-                    <Next width={12} height={12} color='#2385A2' />
+                    <Next width={12} height={12} color='#fff' />
                 </View>
             </View>
         </TouchableOpacity>
@@ -44,7 +54,7 @@ const styles = StyleSheet.create({
         paddingVertical: 15,
         marginHorizontal: 5,
         marginVertical: 5,
-        backgroundColor: '#ffffff',
+        backgroundColor: '#2385A2',
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
@@ -54,6 +64,10 @@ const styles = StyleSheet.create({
         shadowRadius: 1.41,
         elevation: 2,
         borderRadius: 5
+    },
+    pseudoCardContainer: {
+        display: 'flex',
+        flexDirection: 'row',
     },
     cardTextContainer: {
         display: 'flex',
@@ -66,18 +80,18 @@ const styles = StyleSheet.create({
     },
     cardTitle: {
         fontSize: 18,
-        fontWeight: 'bold',
-        color: "#2D2A9B"
+        fontFamily: 'Bold',
+        color: "#fff"
     },
     cardDescription: {
         fontSize: 14,
-        fontWeight: 'normal',
-        color: 'gray'
+        fontFamily: 'Regular',
+        color: 'white'
     },
     cardDate: {
         fontSize: 13,
-        fontStyle: 'italic',
-        color: 'gray',
+        fontFamily: 'Italic',
+        color: 'white',
         marginTop: 5
     }
 });

@@ -1,10 +1,18 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-
+import { useFonts } from 'expo-font';
 import Next from '../icons/next';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function SectorCard(props) {
+    let [fontsLoaded] = useFonts({
+        'Regular': require('../../assets/fonts/OpenSans-Regular.ttf'),
+        'Bold': require('../../assets/fonts/OpenSans-Bold.ttf'),
+        'SemiBold': require('../../assets/fonts/OpenSans-SemiBold.ttf'),
+        'ExtraBold': require('../../assets/fonts/OpenSans-ExtraBold.ttf'),
+        'Italic': require('../../assets/fonts/OpenSans-Italic.ttf'),
+        'Light': require('../../assets/fonts/OpenSans-Light.ttf'),
+    });
     return (
         <LinearGradient 
             colors={[ "#2D2A9B", "#2385A2"]}
@@ -56,12 +64,12 @@ const styles = StyleSheet.create({
     },
     cardTitle: {
         fontSize: 18,
-        fontWeight: 'bold',
+        fontFamily: 'Bold',
         color: "#fff"
     },
     cardDescription: {
         fontSize: 16,
-        fontWeight: 'normal',
+        fontFamily: 'Regular',
         color: '#F1F2F2'
     }
 });

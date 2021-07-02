@@ -6,33 +6,60 @@ import { useGlobal } from '../../store';
 import client from '../../client';
 import LogCard from '../components/LogCard';
 import SubHeader from '../components/SubHeader';
+import { useFonts } from 'expo-font';
+import StatusBarStyle from '../components/StatusBarStyle';
 
 import QRCodeIcon from '../icons/qr-code';
 
 export default function InitialPage() {
     const [keyObra, setKeyObra] = useState(null);
     const [dataObra, setDataObra] = useState(null);
-    const [loadingObra, setLoadingObra] = useState(true);
+    const [loadingAlert, setLoadingAlert] = useState(true);
+    const [loadingOthers, setLoadingOthers] = useState(true);
+    const [alert, setAlert] = useState([]);
+    const [others, setOthers] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [response, setResponse] = useState(null);
     const navigation = useNavigation();
     const localhost = useGlobal('localhost');
     const address = localhost.address;
+    let [fontsLoaded] = useFonts({
+        'Regular': require('../../assets/fonts/OpenSans-Regular.ttf'),
+        'Bold': require('../../assets/fonts/OpenSans-Bold.ttf'),
+        'SemiBold': require('../../assets/fonts/OpenSans-SemiBold.ttf'),
+        'Italic': require('../../assets/fonts/OpenSans-Italic.ttf'),
+        'Light': require('../../assets/fonts/OpenSans-Light.ttf'),
+    });
 
     useEffect(() => {
         getLastObra();
-    }, [])
+    }, []);
 
     useEffect(() => {
-        client.get(`${address}/obra?key=${keyObra}`, (body) => {
+        client.get(`${address}/obra?key=${keyObra}`, 
+        (body) => {
             setDataObra(body);
-            setLoadingObra(false);
+            var alertas = [];
+            var outros = [];
+            for (item of body.logs) {
+                if (formatString(item)[2] == 'alerta') {
+                    alertas.push(item);
+                } else {
+                    outros.push(item);
+                }
+            }
+            setAlert(alertas);
+            setOthers(outros);
+            setLoadingAlert(false);
+            setLoadingOthers(false);
         },
-        (message) => setResponse(message), 
+        (message) => {
+            setLoadingAlert(false);
+            setLoadingOthers(false);
+        }, 
         () => setLoading(false), 
         () => setLoading(false)
         );
-    }, [keyObra])
+    }, [keyObra]);
 
     async function getLastObra() {
         return await AsyncStorage
@@ -43,35 +70,71 @@ export default function InitialPage() {
             .catch((e) => {null})
     }
 
-    if (!dataObra) {
+    function formatString(text) {
+        let date = text.split(" || ")[0];
+        let content = text.split(" || ")[1];
+        let type;
+        try {
+            type = content.split(" ")[1];
+        }
+        catch {
+            type = "observação"
+        }
+        return [date, content, type]
+    }
+
+    if (loadingAlert || loadingOthers || !fontsLoaded) {
         return (
             <View style={{flex: 1, alignContent: 'center', justifyContent: 'center'}}>
                 <ActivityIndicator size='large' color="#2385A2" />
             </View>
         )
     }
-    else {
+    else if (!loadingAlert && !loadingOthers && dataObra) {
         return (
             <>
                 <ScrollView style={styles.container}>
+                    <StatusBarStyle />
                     <SubHeader 
                         responsavel={dataObra.responsavel} 
                         titulo={dataObra.titulo} 
                         endereco={dataObra.endereco}
                     />
-    
-                    <Text style={styles.logTitle}>Registros da última obra</Text>
+
+                    <Text style={styles.logTitle}>Últimos alertas adicionados</Text>
                     <View style={styles.lineStyle} />
                     {
-                        loadingObra ? (<ActivityIndicator size='large' color="#2385A2" />)
-                        : !loadingObra && dataObra !== null && dataObra !== undefined && keyObra !== null ?
-                        dataObra.logs.reverse().map((item, index) => (
+                        loadingAlert ? (<ActivityIndicator size='large' color="#2385A2" />)
+                        : !loadingAlert && alert.length > 0 ? 
+                        alert.reverse().map((item, index) => (
                             <View style={{marginHorizontal: 5, paddingHorizontal: 15}} key={index}> 
-                                <LogCard content={item}/> 
+                                <LogCard 
+                                    type={formatString(item)[2]} 
+                                    content={formatString(item)[1]} 
+                                    date={formatString(item)[0]} 
+                                /> 
                             </View>)
                         )
-                        : (<Text style={{alignSelf: 'center', color: 'gray'}}>Não há conteúdo a ser exibido</Text>)
+                        : (<Text style={{alignSelf: 'center', color: 'gray', fontFamily: 'SemiBold'}}>Não há conteúdo a ser exibido</Text>)
+                    } 
+    
+                    <Text style={styles.logTitle}>Outros registros</Text>
+                    <View style={styles.lineStyle} />
+                    {
+                        loadingOthers ? (<ActivityIndicator size='large' color="#2385A2" />)
+                        : !loadingOthers && others.length > 0 ?
+                        others.reverse().map((item, index) => (
+                            <View style={{marginHorizontal: 5, paddingHorizontal: 15}} key={index}> 
+                                <LogCard 
+                                    type={formatString(item)[2]} 
+                                    content={formatString(item)[1]} 
+                                    date={formatString(item)[0]} 
+                                /> 
+                            </View>)
+                        )
+                        : (<Text style={{alignSelf: 'center', color: 'gray', fontFamily: 'SemiBold'}}>Não há conteúdo a ser exibido</Text>)
                     }
+                    <View style={{height: 200}} />
                 </ScrollView>
                 <View style={styles.containerText}>
                     <TouchableOpacity
@@ -81,7 +144,23 @@ export default function InitialPage() {
                         <QRCodeIcon width={96} height={96} />
                     </TouchableOpacity>
                 </View>
-    
+            </>
+        );
+    }
+    else {
+        return (
+            <>
+                <ScrollView style={styles.container}>
+                    <Text style={{alignSelf: 'center', color: 'gray', justifyContent: 'center', fontFamily: 'SemiBold'}}>Não há conteúdo a ser exibido</Text>
+                </ScrollView>
+                <View style={styles.containerText}>
+                    <TouchableOpacity
+                        style={styles.qrbutton} 
+                        onPress={() => navigation.navigate('QR Code Scanner')}
+                    >
+                        <QRCodeIcon width={96} height={96} />
+                    </TouchableOpacity>
+                </View>
             </>
         );
     }
@@ -120,7 +199,7 @@ const styles = StyleSheet.create({
     logTitle: {
         color: '#2D2A9B',
         fontSize: 20,
-        fontWeight: 'bold',
+        fontFamily: 'Bold',
         paddingTop: 15,
         paddingHorizontal: 15
     },
