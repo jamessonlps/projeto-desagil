@@ -6,6 +6,7 @@ import { useGlobal } from '../../store';
 import NavigateButton from '../components/NavigateButton';
 import SectionTitle from '../components/SectionTitle';
 import QRCode from '../icons/qr-code-header';
+import StatusBarStyle from '../components/StatusBarStyle';
 
 export default function SectorsList({ route }) {
     const navigation = useNavigation();
@@ -42,6 +43,7 @@ export default function SectorsList({ route }) {
 
     return (
         <ScrollView style={{paddingHorizontal: 10}} >
+            <StatusBarStyle />
             <SectionTitle titleSection="Setores do pavimento" />
             {
                 sectorsLoading && sectors !== null ? (<ActivityIndicator size='large' color="#2385A2" />)

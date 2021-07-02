@@ -2,8 +2,15 @@ import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import BuildingIcon from '../icons/building2';
+import { useFonts } from 'expo-font';
 
 export default function SubHeader(props) {
+    let [fontsLoaded] = useFonts({
+        'Regular': require('../../assets/fonts/OpenSans-Regular.ttf'),
+        'Bold': require('../../assets/fonts/OpenSans-Bold.ttf'),
+        'Italic': require('../../assets/fonts/OpenSans-Italic.ttf'),
+    });
+
     return (
         <LinearGradient 
             colors={[ "#2D2A9B", "#2385A2"]}
@@ -39,7 +46,7 @@ const styles = StyleSheet.create({
     headerTitle: {
         color: '#fff',
         fontSize: 21,
-        fontWeight: 'bold'
+        fontFamily: 'Bold'
     },
     subTitleHeader: {
         marginBottom: 15,
@@ -47,15 +54,16 @@ const styles = StyleSheet.create({
         paddingRight: 15,
         color: '#fff',
         fontSize: 21,
-        fontWeight: 'bold'
+        fontFamily: 'Bold'
     },
     headerSubTitle: {
         color: '#fff',
         fontSize: 18,
-        fontWeight: 'bold'
+        fontFamily: 'Bold'
     },
     headerResponsavel: {
         fontSize: 14, 
-        color: '#F1F2F2'
+        color: '#F1F2F2',
+        fontFamily: 'Regular'
     }
 })

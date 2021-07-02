@@ -41,9 +41,14 @@ export default function QRCodeScanner() {
                 `${body.titulo}`,
                 `Responsável: ${body.responsavel || "Não especificado"}`,
                 [
-                    {text: "Cancelar", style: "cancel"}, 
+                    {text: "Cancelar", style: "cancel", onPress: () => {
+                        setScanned(false);
+                        setTarget(null);
+                    }}, 
                     {text: "Ver mais", onPress: () => {
                         navigation.navigate(path, {...body, tipoObra: readingType, keyRef: target});
+                        setScanned(false);
+                        setTarget(null);
                     }}
                 ]
             )
@@ -91,7 +96,7 @@ export default function QRCodeScanner() {
                     <TouchableOpacity 
                     style={styles.button}
                     onPress={() => {
-                        setScanned(false)
+                        setScanned(false);
                         setTarget(null);
                     }}>
                     <Text style={{color: '#fff', fontSize: 22}}>Escanear novamente</Text>

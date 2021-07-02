@@ -3,10 +3,20 @@ import { StyleSheet, View, Text, ActivityIndicator, TextInput, TouchableOpacity,
 import { formatData } from '../utils/FormatDate';
 import QRCode from '../icons/qr-code-header';
 import { useNavigation } from '@react-navigation/native';
+import StatusBarStyle from '../components/StatusBarStyle';
+import { useFonts } from 'expo-font';
 
 export default function CommentsView({ route }) {
     const [listComments, setListComments] = useState(null);
     const navigation = useNavigation();
+    let [fontsLoaded] = useFonts({
+        'Regular': require('../../assets/fonts/OpenSans-Regular.ttf'),
+        'Bold': require('../../assets/fonts/OpenSans-Bold.ttf'),
+        'SemiBold': require('../../assets/fonts/OpenSans-SemiBold.ttf'),
+        'ExtraBold': require('../../assets/fonts/OpenSans-ExtraBold.ttf'),
+        'Italic': require('../../assets/fonts/OpenSans-Italic.ttf'),
+        'Light': require('../../assets/fonts/OpenSans-Light.ttf'),
+    });
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -35,6 +45,7 @@ export default function CommentsView({ route }) {
 
     return (
         <ScrollView style={styles.outerContainer}>
+            <StatusBarStyle />
             <View style={styles.mainCommentContainer}>
                 <Text style={styles.textTitulo}>{route.params?.titulo}</Text>
                 <Text style={styles.textAutor}>Aberta por: {route.params?.autor}, {route.params?.cargo}</Text>
@@ -43,6 +54,7 @@ export default function CommentsView({ route }) {
                     <Text style={styles.textStatus}>Status: {route.params?.resolvido ? "Resolvido" : "Pendente"}</Text>
                     <Text style={styles.textStatus}>Relevância: {route.params?.alerta ? "Alta" : "Baixa"}</Text>
                 </View>
+                <View style={{borderWidth: 0.3, borderColor: 'gray', marginTop: 10}} />
                 <Text style={styles.textAssunto}>{route.params?.assunto}</Text>
             </View>
 
@@ -56,7 +68,7 @@ export default function CommentsView({ route }) {
                         </View>
                     ))
                     :
-                    <Text style={{alignSelf: 'center'}}>Ainda não há respostas a essa observação</Text>
+                    <Text style={{alignSelf: 'center', fontFamily: 'Bold'}}>Ainda não há respostas a essa observação</Text>
                 }
             </View>
         </ScrollView>
@@ -86,25 +98,28 @@ const styles = StyleSheet.create({
     },
     textTitulo: {
         fontSize: 22,
-        fontWeight: 'bold',
+        fontFamily: 'Bold',
         color: '#2D2A9B'
     },
     textAssunto: {
         fontSize: 18,
         marginTop: 10,
-        color: '#000'
+        color: '#000',
+        fontFamily: 'Light'
     },
     textAutor: {
         fontSize: 17,
-        color: '#5c5c5c'
+        color: '#5c5c5c',
+        fontFamily: 'SemiBold'
     },
     textDate: {
         fontSize: 17,
-        color: '#5c5c5c'
+        color: '#5c5c5c',
+        fontFamily: 'SemiBold'
     },
     textStatus: {
         color: '#2385A2',
-        fontWeight: 'bold',
+        fontFamily: 'Bold',
         fontSize: 16
     },
     commentCard: {
@@ -119,86 +134,14 @@ const styles = StyleSheet.create({
     },
     commentCardText: {
         color: 'black',
-        fontSize: 16
+        fontSize: 16,
+        fontFamily: 'Regular'
     },
     commentTextBottom: {
         alignSelf: 'flex-end',
         color: 'gray',
         fontSize: 13,
-        fontStyle: 'italic'
-    },
-    resolvedButton: {
-        alignSelf: 'center',
-        marginTop: 15
-    },
-    buttonSubmit: {
-        backgroundColor: '#2385A2',
-        alignSelf: 'center',
-        paddingVertical: 10,
-        margin: 3,
-        width: 240,
-        alignContent: 'center',
-        borderRadius: 10,
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowOpacity: 0.20,
-        shadowRadius: 1.41,
-        elevation: 2,
-    },
-    textResolvedButton: {
-        alignSelf: 'center',
-        color: 'white',
-        fontSize: 18,
-        fontWeight: 'bold'
-    },
-    inputText: {
-        backgroundColor: '#fff',
-        paddingVertical: 5
-    },
-    // ESTILIZAÇÃO DO INPUT DE COMENTÁRIO
-    inputTitle: {
-        fontSize: 18,
-        paddingTop: 15,
-        color: "#2D2A9B",
-        alignSelf: 'center',
-        fontWeight: 'bold'
-    },
-    inputContainer: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        padding: 15,
-        backgroundColor: '#fff'
-    },
-    inputArea: {
-        borderRadius: 5,
-        padding: 5,
-        backgroundColor: "#f1f2f2",
-        // margin: 5,
-        width: '87%',
-        height: 40,
-        fontSize: 16
-    },
-    inputButton: {
-        // backgroundColor: "#2385A2",
-        alignItems: 'center',
-        alignSelf: 'center',
-        justifyContent: 'center',
-        // paddingHorizontal: 25,
-        // paddingVertical: 6,
-        // marginTop: 10,
-        borderRadius: 100,
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowOpacity: 0.20,
-        shadowRadius: 1.41,
-        elevation: 2,
-        // width: '10%'
+        fontFamily: 'Italic',
+        paddingTop: 5
     }
 })

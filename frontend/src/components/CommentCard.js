@@ -3,9 +3,18 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { formatData } from '../utils/FormatDate';
 import { useNavigation } from '@react-navigation/native';
 import Next from '../icons/next';
+import { useFonts } from 'expo-font';
 
 export default function CommentCard(props) {
     const navigation = useNavigation();
+    let [fontsLoaded] = useFonts({
+        'Regular': require('../../assets/fonts/OpenSans-Regular.ttf'),
+        'Bold': require('../../assets/fonts/OpenSans-Bold.ttf'),
+        'SemiBold': require('../../assets/fonts/OpenSans-SemiBold.ttf'),
+        'ExtraBold': require('../../assets/fonts/OpenSans-ExtraBold.ttf'),
+        'Italic': require('../../assets/fonts/OpenSans-Italic.ttf'),
+        'Light': require('../../assets/fonts/OpenSans-Light.ttf'),
+    });
 
     return (
         <>
@@ -34,16 +43,17 @@ const styles = StyleSheet.create({
     },
     cardDescription: {
         fontSize: 16,
-        fontWeight: 'normal',
+        fontFamily: 'Regular',
         color: '#000'
     },
     cardDate: {
-        fontStyle: 'italic',
+        fontFamily: 'Italic',
         fontSize: 14,
         color: 'gray'
     },
     textContainer: {
-        width: '96%'
+        width: '96%',
+        paddingRight: 10
     },
     iconContainer: {
         alignSelf: 'center',

@@ -2,32 +2,27 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import LogIcon from '../icons/log';
 import AlertIcon from '../icons/warning';
+import { useFonts } from 'expo-font';
 
 export default function LogCard(props) {
-    function formatString(text) {
-        let date = text.split(" || ")[0];
-        let content = text.split(" || ")[1];
-        let type;
-        try {
-            type = content.split(" ")[1];
-        }
-        catch {
-            type = "observação"
-        }
-        return [date, content, type]
-    }
+    let [fontsLoaded] = useFonts({
+        'Regular': require('../../assets/fonts/OpenSans-Regular.ttf'),
+        'Bold': require('../../assets/fonts/OpenSans-Bold.ttf'),
+        'Italic': require('../../assets/fonts/OpenSans-Italic.ttf'),
+        'Light': require('../../assets/fonts/OpenSans-Light.ttf'),
+    });
 
     return (
         <View style={styles.outerContainer}>
             <View style={styles.cardIconContainer}>
                 {
-                    formatString(props.content)[2] == "alerta" ? (<AlertIcon width={30} height={30} />)
+                    props.type == "alerta" ? (<AlertIcon width={30} height={30} />)
                     : (<LogIcon />)
                 }
             </View>
             <View style={styles.cardTextContainer}>
-                <Text style={styles.description}>{formatString(props.content)[1]}</Text>
-                <Text style={styles.date}>{formatString(props.content)[0]}</Text>
+                <Text style={styles.description}>{props.content}</Text>
+                <Text style={styles.date}>{props.date}</Text>
             </View>
         </View>
     );
@@ -54,20 +49,22 @@ const styles = StyleSheet.create({
     },
     description: {
         color: '#484444',
-        fontSize: 16
+        fontSize: 16,
+        fontFamily: 'Regular'
     },
     cardTextContainer: {
         display: 'flex',
         flexDirection: 'column',
-        width: '90%'
+        width: '90%',
+        paddingLeft: 5
     },
     cardIconContainer: {
         width: '10%',
         alignSelf: 'center'
     },
     date: {
-        fontSize: 14,
+        fontSize: 13,
         color: 'gray',
-        fontStyle: 'italic'
+        fontFamily: 'Italic'
     }
 });

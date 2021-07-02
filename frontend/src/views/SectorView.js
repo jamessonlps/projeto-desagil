@@ -12,6 +12,7 @@ import SectionTitle from '../components/SectionTitle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SendIcon from '../icons/send-arrow';
 import QRCode from '../icons/qr-code-header';
+import StatusBarStyle from '../components/StatusBarStyle';
 
 export default function GeneralView({ route }) {
     const [loading, setLoading] = useState(true);
@@ -22,15 +23,18 @@ export default function GeneralView({ route }) {
     const [response, setResponse] = useState(null);
     const [textInput, setTextInput] = useState(null);
     const [dataLoading, setDataLoading] = useState(true);
-    const [refresh, setRefresh] = useState(null);
-    const [msg, setMsg] = useState('');
     const navigation = useNavigation();
     const localhost = useGlobal('localhost');
     const address = localhost.address;
-    const [log, setLog] = useState(null);
     const [userName, setUserName] = useState(null);
     const [userOccupation, setUserOccupation] = useState(null);
     const [fullData, setFullData] = useState(null);
+    const [alerts, setAlerts] = useState([]);
+    const [obs, setObs] = useState([]);
+    const [obsResolved, setObsResolved] = useState([]);
+    const [alertsLoading, setAlertsLoading] = useState(true);
+    const [obsLoading, setObsLoading] = useState(true);
+    const [obsResolvedLoading, setObsResolvedLoading] = useState(true);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -93,11 +97,11 @@ export default function GeneralView({ route }) {
                 newNote,
                 (message) => {
                     newNote = {...newNote, dataCriacao: message.date, key: message.key}
-                    if (log) {
-                        setLog([...log, newNote]);
+                    if (isAlert) {
+                        setAlerts([...alerts, newNote]);
                     }
                     else {
-                        setLog([newNote]);
+                        setObs([...obs, newNote]);
                     }
                     setLogLoading(false);
                     setLoading(false);
@@ -132,10 +136,13 @@ export default function GeneralView({ route }) {
         setLoading(true);
         client.get(`${address}/observacao/list?observacoes=${data.observacoes}`, 
         (body) => {
-            setLog(body);
-            setLogLoading(false);
+            filterObservations(body);
         },
-        (message) => {null}, 
+        (message) => {
+            setAlertsLoading(false);
+            setObsLoading(false);
+            setObsResolvedLoading(false);
+        }, 
         () => setLoading(false), 
         () => setLoading(false)
         );
@@ -151,6 +158,29 @@ export default function GeneralView({ route }) {
         );
     }
 
+
+    function filterObservations(data) {
+        var alerts = [];
+        var observations = [];
+        var observationsResolved = [];
+        data.forEach((item) => {
+            if (item.alerta && !item.resolvido) {
+                alerts.push(item);
+            }
+            else if (!item.alerta && !item.resolvido) {
+                observations.push(item);
+            }
+            else {
+                observationsResolved.push(item);
+            }
+        });
+        setAlerts(alerts);
+        setObs(observations);
+        setObsResolved(observationsResolved);
+        setAlertsLoading(false);
+        setObsLoading(false);
+        setObsResolvedLoading(false);
+    }
 
 
     async function getUserInfo() {
@@ -177,11 +207,16 @@ export default function GeneralView({ route }) {
     }
 
 
-    if (dataLoading) {
-        return (<ActivityIndicator />)
+    if (alertsLoading && obsLoading && obsResolvedLoading) {
+        return (
+            <View style={{flex: 1, justifyContent: 'center', alignContent: 'center'}}>
+                <ActivityIndicator size='large' color="#2385A2" />
+            </View>
+        )
     } else {
     return (
         <ScrollView style={styles.outerContainer}>
+            <StatusBarStyle />
             <SubHeader
                 titulo={fullData.titulo}
                 responsavel={fullData.responsavel} 
@@ -203,9 +238,9 @@ export default function GeneralView({ route }) {
                 {/* =============== ALERTAS ================= */}
                 <SectionTitle titleSection="Alertas" />
                 {
-                    logLoading && log !== null ? (<ActivityIndicator size='large' color="#2385A2" />) 
-                    : !logLoading && log.length > 0 ?
-                    log.map((item, index) => item.alerta && !item.resolvido ? (
+                    alertsLoading ? (<ActivityIndicator size='large' color="#2385A2" />) 
+                    : !alertsLoading && alerts.length > 0 ?
+                    alerts.map((item, index) => item.alerta && !item.resolvido ? (
                         <View key={index}>
                             <AlertCard 
                                 assunto={item.assunto}
@@ -215,7 +250,7 @@ export default function GeneralView({ route }) {
                             />
                         </View>
                     ) : null)
-                    : <Text style={{alignSelf: 'center', color: 'gray'}}>Não há conteúdo a ser exibido</Text>
+                    : <Text style={{alignSelf: 'center', color: 'gray', fontFamily: 'SemiBold'}}>Não há conteúdo a ser exibido</Text>
                 }
 
 
@@ -223,19 +258,19 @@ export default function GeneralView({ route }) {
                 <SectionTitle titleSection="Observações" />
                 <View style={styles.obsContainer}>
                     {
-                        logLoading && log !== null ? (<ActivityIndicator size='large' color="#2385A2" />)
-                        : !logLoading && log.length > 0 ? 
-                        log.map((item, index) => !item.alerta && !item.resolvido ? (
+                        obsLoading ? (<ActivityIndicator size='large' color="#2385A2" />)
+                        : !obsLoading && obs.length > 0 ? 
+                        obs.map((item, index) => !item.alerta && !item.resolvido ? (
                             <View style={{marginHorizontal: 10}} key={index}>
                                 <CommentCard 
                                     assunto={item.assunto}
                                     dataCriacao={item.dataCriacao}
                                     dados={{...item, "tipoObra": route.params?.tipoObra, "keyRef": fullData.key, "titulo": fullData.titulo}}
                                     destino={"CommentsView"}
-                                />
+                                    />
                             </View>
                         ) : null)
-                        : <Text style={{alignSelf: 'center', color: 'gray'}}>Não há conteúdo a ser exibido</Text>
+                        : <Text style={{alignSelf: 'center', color: 'gray', fontFamily: 'SemiBold'}}>Não há conteúdo a ser exibido</Text>
                     }
                     {/* =============== INPUT NOVA OBSERVAÇÃO / ALERTA ================= */}
                     <Text style={styles.inputTitle} > Adicionar observação ou alerta</Text>
@@ -265,9 +300,9 @@ export default function GeneralView({ route }) {
                 {/* =============== OBSERVAÇÕES RESOLVIDAS ================= */}
                 <SectionTitle titleSection="Observações resolvidas" />
                 {
-                    logLoading && log !== null ? (<ActivityIndicator size='large' color="#2385A2" />)
-                    : !logLoading && log !== null ? 
-                    log.map((item, index) => item.resolvido ? (
+                    obsResolvedLoading ? (<ActivityIndicator size='large' color="#2385A2" />)
+                    : !obsResolvedLoading && obsResolved.length > 0 ? 
+                    obsResolved.map((item, index) => item.resolvido ? (
                         <View key={index}>
                             <CommentCard 
                                 assunto={item.assunto}
@@ -278,7 +313,7 @@ export default function GeneralView({ route }) {
                             />
                         </View>
                     ) : null)
-                    : <Text style={{alignSelf: 'center', color: 'gray'}}>Não há conteúdo a ser exibido</Text>
+                    : <Text style={{alignSelf: 'center', color: 'gray', fontFamily: 'SemiBold'}}>Não há conteúdo a ser exibido</Text>
                 }
             
             </View>
@@ -294,8 +329,8 @@ const styles = StyleSheet.create({
         flexDirection: 'column'
     },
     contentContainer: {
-        paddingRight: 15,
-        paddingLeft: 15,
+        paddingHorizontal: 15,
+        paddingTop: 15
     },
     inputContainer: {
         display: 'flex',
@@ -304,13 +339,9 @@ const styles = StyleSheet.create({
         padding: 15
     },
     inputButton: {
-        // backgroundColor: "#2385A2",
         alignItems: 'center',
         alignSelf: 'center',
         justifyContent: 'center',
-        // paddingHorizontal: 25,
-        // paddingVertical: 6,
-        // marginTop: 10,
         borderRadius: 100,
         shadowColor: "#000",
         shadowOffset: {
@@ -320,23 +351,22 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.20,
         shadowRadius: 1.41,
         elevation: 2,
-        // width: '10%'
     },
     inputArea: {
         borderRadius: 5,
         padding: 5,
         backgroundColor: "#f1f2f2",
-        // margin: 5,
         width: '87%',
         height: 40,
-        fontSize: 16
+        fontSize: 16,
+        fontFamily: 'Regular'
     },
     inputTitle: {
         fontSize: 18,
         paddingTop: 15,
         color: "#2D2A9B",
         alignSelf: 'center',
-        fontWeight: 'bold'
+        fontFamily: 'Bold'
     },
     obsContainer: {
         backgroundColor: '#fff', 

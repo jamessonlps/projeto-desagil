@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { formatData } from '../utils/FormatDate';
 import SendIcon from '../icons/send-arrow';
 import QRCode from '../icons/qr-code-header';
+import { useFonts } from 'expo-font';
 
 export default function CommentsView({ route }) {
     const [commentInput, setCommentInput] = useState(null);
@@ -20,6 +21,14 @@ export default function CommentsView({ route }) {
     const localhost = useGlobal('localhost');
     const address = localhost.address;
     const navigation = useNavigation();
+    let [fontsLoaded] = useFonts({
+        'Regular': require('../../assets/fonts/OpenSans-Regular.ttf'),
+        'Bold': require('../../assets/fonts/OpenSans-Bold.ttf'),
+        'SemiBold': require('../../assets/fonts/OpenSans-SemiBold.ttf'),
+        'ExtraBold': require('../../assets/fonts/OpenSans-ExtraBold.ttf'),
+        'Italic': require('../../assets/fonts/OpenSans-Italic.ttf'),
+        'Light': require('../../assets/fonts/OpenSans-Light.ttf'),
+    });
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -49,7 +58,7 @@ export default function CommentsView({ route }) {
     }
 
     function sendComment() {
-        if (commentInput !== '' && commentInput !== undefined) {
+        if (commentInput !== '' && commentInput !== undefined && commentInput !== null) {
             setSendLoading(true);
             let now = getDate();
             let newComment = now + ` || ${userName} || ${userOccupation} || ${commentInput}`
@@ -143,71 +152,82 @@ export default function CommentsView({ route }) {
         return [`${content}`, `${date} - ${author}, ${cargo}`]
     }
 
-    return (
-        <>
-        <ScrollView style={styles.outerContainer}>
-            <View style={styles.mainCommentContainer}>
-                <Text style={styles.textTitulo}>{route.params?.titulo}</Text>
-                <Text style={styles.textAutor}>Aberta por: {route.params?.autor}, {route.params?.cargo}</Text>
-                <Text style={styles.textDate}>Criado em: {formatData(route.params?.dataCriacao)}</Text>
-                <View style={{marginLeft: 10}}>
-                    <Text style={styles.textStatus}>Status: {route.params?.resolvido ? "Resolvido" : "Pendente"}</Text>
-                    <Text style={styles.textStatus}>Relevância: {route.params?.alerta ? "Alta" : "Baixa"}</Text>
+    if (!fontsLoaded) {
+        return (
+            <View style={{flex: 1, alignContent: 'center', justifyContent: 'center'}}>
+                <ActivityIndicator size='large' color="#2385A2" />
+            </View>
+        )
+    }
+    else {
+
+        return (
+            <>
+            <ScrollView style={styles.outerContainer}>
+                <View style={styles.mainCommentContainer}>
+                    <Text style={styles.textTitulo}>{route.params?.titulo}</Text>
+                    <Text style={styles.textAutor}>Aberta por: {route.params?.autor}, {route.params?.cargo}</Text>
+                    <Text style={styles.textDate}>Criado em: {formatData(route.params?.dataCriacao)}</Text>
+                    <View style={{marginLeft: 10}}>
+                        <Text style={styles.textStatus}>Status: {route.params?.resolvido ? "Resolvido" : "Pendente"}</Text>
+                        <Text style={styles.textStatus}>Relevância: {route.params?.alerta ? "Alta" : "Baixa"}</Text>
+                    </View>
+                    <View style={{borderWidth: 0.3, borderColor: 'gray', marginTop: 10}} />
+                    <Text style={styles.textAssunto}>{route.params?.assunto}</Text>
                 </View>
-                <Text style={styles.textAssunto}>{route.params?.assunto}</Text>
-            </View>
-
-            <View>
+    
+                <View>
+                    {
+                        listComments !== undefined && listComments !== null && listComments.length > 0 ?
+                        listComments.map((item, index) => (
+                            <View style={styles.commentCard} key={index}>
+                                <Text style={styles.commentCardText}>{formatCommentCard(item)[0]}</Text>
+                                <Text style={styles.commentTextBottom}>{formatCommentCard(item)[1]}</Text>
+                            </View>
+                        ))
+                        :
+                        <Text style={{alignSelf: 'center', fontFamily: 'SemiBold'}}>Ainda não há respostas a essa observação</Text>
+                    }
+                </View>
+    
+                <View style={styles.resolvedButton}>
+                    {
+                        resolveLoading ? (<ActivityIndicator size='large' color='#2385A2' />)
+                        : (
+                            <TouchableOpacity 
+                                style={styles.buttonSubmit} 
+                                onPress={resolveComment}>
+                                <Text style={styles.textResolvedButton}>Marcar como resolvido</Text>
+                            </TouchableOpacity>
+                        )
+                    }
+                </View>
+            </ScrollView>
+    
+            <View style={styles.inputContainer}>
+                <TextInput 
+                    style={styles.inputArea} 
+                    placeholder="Digite aqui seu comentário..." 
+                    selectionColor='#2385A2'
+                    onChangeText={(text) => {
+                        setCommentInput(text)
+                    }}
+                    value={commentInput}
+                />
                 {
-                    listComments !== undefined && listComments !== null && listComments.length > 0 ?
-                    listComments.map((item, index) => (
-                        <View style={styles.commentCard} key={index}>
-                            <Text style={styles.commentCardText}>{formatCommentCard(item)[0]}</Text>
-                            <Text style={styles.commentTextBottom}>{formatCommentCard(item)[1]}</Text>
-                        </View>
-                    ))
-                    :
-                    <Text style={{alignSelf: 'center'}}>Ainda não há respostas a essa observação</Text>
-                }
-            </View>
-
-            <View style={styles.resolvedButton}>
-                {
-                    resolveLoading ? (<ActivityIndicator size='large' color='#2385A2' />)
+                    sendLoading ? (<ActivityIndicator size='large' color='#2385A2' />)
                     : (
                         <TouchableOpacity 
-                            style={styles.buttonSubmit} 
-                            onPress={resolveComment}>
-                            <Text style={styles.textResolvedButton}>Marcar como resolvido</Text>
+                            style={styles.inputButton}
+                            onPress={() => sendComment()}>
+                            <SendIcon width={40} height={40} />
                         </TouchableOpacity>
                     )
                 }
             </View>
-        </ScrollView>
-
-        <View style={styles.inputContainer}>
-            <TextInput 
-                style={styles.inputArea} 
-                placeholder="Digite aqui seu comentário..." 
-                selectionColor='#2385A2'
-                onChangeText={(text) => {
-                    setCommentInput(text)
-                }}
-                value={commentInput}
-            />
-            {
-                sendLoading ? (<ActivityIndicator size='large' color='#2385A2' />)
-                : (
-                    <TouchableOpacity 
-                        style={styles.inputButton}
-                        onPress={() => sendComment()}>
-                        <SendIcon width={40} height={40} />
-                    </TouchableOpacity>
-                )
-            }
-        </View>
-        </>
-    );
+            </>
+        );
+    }
 }
 
 const styles = StyleSheet.create({
@@ -233,7 +253,7 @@ const styles = StyleSheet.create({
     },
     textTitulo: {
         fontSize: 22,
-        fontWeight: 'bold',
+        fontFamily: 'Bold',
         color: '#2D2A9B',
         paddingVertical: 2
     },
@@ -241,21 +261,24 @@ const styles = StyleSheet.create({
         fontSize: 18,
         marginTop: 10,
         color: '#000',
-        paddingVertical: 1
+        paddingVertical: 1,
+        fontFamily: 'Light'
     },
     textAutor: {
         fontSize: 17,
         color: '#5c5c5c',
-        paddingVertical: 1
+        paddingVertical: 1,
+        fontFamily: "SemiBold"
     },
     textDate: {
         fontSize: 17,
         color: '#5c5c5c',
-        paddingVertical: 1
+        paddingVertical: 1,
+        fontFamily: "SemiBold"
     },
     textStatus: {
         color: '#2385A2',
-        fontWeight: 'bold',
+        fontFamily: 'Bold',
         fontSize: 16,
         paddingVertical: 1
     },
@@ -270,14 +293,16 @@ const styles = StyleSheet.create({
         flexDirection: 'column'
     },
     commentCardText: {
-        color: 'black',
-        fontSize: 16
+        color: '#000',
+        fontSize: 16,
+        fontFamily: 'Regular'
     },
     commentTextBottom: {
         alignSelf: 'flex-end',
         color: 'gray',
         fontSize: 13,
-        fontStyle: 'italic'
+        fontFamily: 'Italic',
+        paddingTop: 5
     },
     resolvedButton: {
         alignSelf: 'center',
@@ -304,7 +329,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         color: 'white',
         fontSize: 18,
-        fontWeight: 'bold'
+        fontFamily: 'Bold'
     },
     inputText: {
         backgroundColor: '#fff',
@@ -332,7 +357,8 @@ const styles = StyleSheet.create({
         // margin: 5,
         width: '87%',
         height: 40,
-        fontSize: 16
+        fontSize: 16,
+        fontFamily: 'SemiBold'
     },
     inputButton: {
         // backgroundColor: "#2385A2",

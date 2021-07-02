@@ -7,6 +7,7 @@ import NavigateButton from '../components/NavigateButton';
 import SectionTitle from '../components/SectionTitle';
 import { formatData } from '../utils/FormatDate';
 import QRCode from '../icons/qr-code-header';
+import { useFonts } from 'expo-font';
 
 export default function DocumentsList({ route }) {
     const navigation = useNavigation();
@@ -16,6 +17,14 @@ export default function DocumentsList({ route }) {
     const [docsLoading, setDocsLoading] = useState(true);
     const localhost = useGlobal('localhost');
     const address = localhost.address;
+    let [fontsLoaded] = useFonts({
+        'Regular': require('../../assets/fonts/OpenSans-Regular.ttf'),
+        'Bold': require('../../assets/fonts/OpenSans-Bold.ttf'),
+        'SemiBold': require('../../assets/fonts/OpenSans-SemiBold.ttf'),
+        'ExtraBold': require('../../assets/fonts/OpenSans-ExtraBold.ttf'),
+        'Italic': require('../../assets/fonts/OpenSans-Italic.ttf'),
+        'Light': require('../../assets/fonts/OpenSans-Light.ttf'),
+    });
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -57,7 +66,7 @@ export default function DocumentsList({ route }) {
                         dataCriacao={formatData(item.dataCriacao)}
                     />
                 ))
-                : <Text style={{alignSelf: 'center', color: 'gray'}}>Não há conteúdo a ser exibido</Text>
+                : <Text style={{alignSelf: 'center', color: 'gray', fontFamily: 'SemiBold'}}>Não há documentos nessa seção</Text>
             }
         </ScrollView>
     );
